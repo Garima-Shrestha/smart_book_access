@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_book_access/screens/splash_screen.dart';
+import 'package:smart_book_access/screens/welcome_screen.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
