@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smart_book_access/screens/welcome_screen.dart';
+import 'package:smart_book_access/screens/onboarding_screen.dart';
 import 'dart:async'; // for timer
-
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -18,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Timer(Duration(seconds: 2), (){
       Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => WelcomeScreen())  // pushReplacement use garda, user le back garda it won't go back to splash page. But when we use push, user le back garda we go back.
+          MaterialPageRoute(builder: (context) => OnboardingScreen())  // pushReplacement use garda, user le back garda it won't go back to splash page. But when we use push, user le back garda we go back.
       );
     });
   }
