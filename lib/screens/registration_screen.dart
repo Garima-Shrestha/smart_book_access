@@ -54,21 +54,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 // Text
                 // SizedBox(height: 30),
                 Center(child: Text("Create your account", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30))),
-        
+
                 // Name
                 SizedBox(height: 41),
                 Padding(
                   padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                   child: MyTextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: "Enter your name",
-                        hintText: "Example",
-                        prefixIcon: Icon(Icons.person, color: Color(0xFF00354B)),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: "Enter your name",
+                      hintText: "Example",
+                      prefixIcon: Icon(Icons.person, color: Color(0xFF00354B)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Name is required.';
@@ -77,20 +77,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     },
                   ),
                 ),
-        
+
                 // Email
                 SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                   child: MyTextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
                         labelText: "Enter email",
                         hintText: "example@gmail.com",
                         prefixIcon: Icon(Icons.email, color: Color(0xFF00354B)),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12),
                         )
                     ),
                     validator: (value) {
@@ -105,22 +105,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     },
                   ),
                 ),
-        
+
                 // Phone number
                 SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                   child: MyTextFormField(
-                      controller: _phoneNumberController,
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
+                    controller: _phoneNumberController,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
                         labelText: "Enter phone number",
                         hintText: "98000000",
                         prefixIcon: Icon(Icons.phone, color: Color(0xFF00354B)),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12),
                         )
-                      ),
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Phone number is required.';
@@ -132,46 +132,46 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     },
                   ),
                 ),
-                
+
                 // Password
                 SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                   child: MyTextFormField(
-                      controller: _passwordController,
-                      isPassword: true,
-                      decoration: InputDecoration(
-                        labelText: "Create password",
-                        hintText: "Min 8 characters",
-                        prefixIcon: const Icon(Icons.lock, color: Color(0xFF00354B)),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12)
-                        ),
+                    controller: _passwordController,
+                    isPassword: true,
+                    decoration: InputDecoration(
+                      labelText: "Create password",
+                      hintText: "Min 8 characters",
+                      prefixIcon: const Icon(Icons.lock, color: Color(0xFF00354B)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)
                       ),
+                    ),
                     validator: (value) {
-                        if (value == null || value.length < 8) {
-                          return 'Password must be at least 8 characters.';
-                        }
-                        return null;
-                      },
+                      if (value == null || value.length < 8) {
+                        return 'Password must be at least 8 characters.';
+                      }
+                      return null;
+                    },
                   ),
                 ),
-        
+
                 // Confirm Password
                 SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                   child: MyTextFormField(
-                      controller: _confirmPasswordController,
-                      isPassword: true,
-                      decoration: InputDecoration(
-                        labelText: "Confirm password",
-                        hintText: "Re-enter password",
-                        prefixIcon: Icon(Icons.lock, color: Color(0xFF00354B)),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                    controller: _confirmPasswordController,
+                    isPassword: true,
+                    decoration: InputDecoration(
+                      labelText: "Confirm password",
+                      hintText: "Re-enter password",
+                      prefixIcon: Icon(Icons.lock, color: Color(0xFF00354B)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Confirm your password.';
@@ -201,12 +201,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             password: _passwordController.text,
                             confirmPassword: _confirmPasswordController.text
                         );
-        
+
                         // Add the new registration to the list
                         setState(() {
                           lstRegistration.add(newRegistration);
                         });
-        
+
                         // Clear the form fields after adding
                         _nameController.clear();
                         _emailController.clear();
@@ -226,7 +226,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                 ),
 
-                
+
                 // SignIn Navigation
                 SizedBox(height: 30),
                 Row(
@@ -243,13 +243,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       },
                       child: Text('SIGNIN',
                         style: TextStyle(
-                            fontSize: 18,
-                            color: Color(0xFF1A68EE),
+                          fontSize: 18,
+                          color: Color(0xFF1A68EE),
                         ),
                       ),
                     ),
                   ],
-                )
+                ),
+                SizedBox(height: 60)
               ],
             )
         ),
