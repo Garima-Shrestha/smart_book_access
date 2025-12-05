@@ -164,6 +164,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
               ),
+              SizedBox(height: 70)
             ]
         ),
       ),
