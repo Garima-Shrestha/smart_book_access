@@ -72,7 +72,8 @@ class HomepageScreen extends StatelessWidget {
               padding: const EdgeInsets.only(top: 30.0, bottom: 20.0, left: 30.0, right: 30.0),
               child: SizedBox(
                 height: 40,
-                width: 380,
+                // width: 380,
+                width: double.infinity,
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Search',
@@ -89,13 +90,23 @@ class HomepageScreen extends StatelessWidget {
 
             // Promotion Banner
             SizedBox(height: 8),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(context, 
-                  MaterialPageRoute(builder: (context) => CategoryScreen()),
-                );
-              },
-                child: Image.asset("assets/images/banner.png")
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CategoryScreen()),
+                  );
+                },
+                child: SizedBox(
+                  width: double.infinity,   
+                  child: Image.asset(
+                    "assets/images/banner.png",
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
             ),
 
 
@@ -140,7 +151,11 @@ class HomepageScreen extends StatelessWidget {
                       },
                   )
               ),
-            )
+            ),
+
+            SizedBox(height: 50),
+            Text("Homepage", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+            SizedBox(height: 70),
           ],
         ),
       ),
