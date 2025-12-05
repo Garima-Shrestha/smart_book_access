@@ -213,13 +213,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         _phoneNumberController.clear();
                         _passwordController.clear();
                         _confirmPasswordController.clear();
-                      }
 
-                      // Navigate to LoginScreen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const LoginScreen()),
-                      );
+                        // Navigate to LoginScreen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LoginScreen()),
+                        );
+                      }
                     },
                         text: "SIGNUP"
                     ),
