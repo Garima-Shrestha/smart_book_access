@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_book_access/screens/onboarding_screen.dart';
-import 'dart:async';
-
-import 'package:smart_book_access/screens/onboarding_screen.dart'; // for timer
-
+import 'dart:async'; // for timer
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
