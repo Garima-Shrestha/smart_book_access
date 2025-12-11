@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_book_access/model/login.dart';
-import 'package:smart_book_access/screens/homepage_screen.dart';
+import 'package:smart_book_access/screens/bottom_navigation_screen.dart';
 import 'package:smart_book_access/screens/registration_screen.dart';
 import 'package:smart_book_access/widgets/my_button.dart';
 import 'package:smart_book_access/widgets/my_text_form_field.dart';
@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => HomepageScreen()),
+                            MaterialPageRoute(builder: (context) => BottomNavigationScreen()),
                           );
                         }
                       },
