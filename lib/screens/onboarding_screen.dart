@@ -14,16 +14,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   PageController _pageController = PageController();
   int _currentPage = 0;
 
-  // Koho font style use garna
-  TextStyle getKohoStyle({required FontWeight weight, required double size}) {
-    return GoogleFonts.koHo(
-      fontWeight: weight,
-      fontSize: size,
-      color: Colors.black,
-      height: 1.2,
-    );
-  }
-
 
   // Dot indicator widget
   Widget _buildDot(int index) {   // returns a single widgets
@@ -50,13 +40,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Image.asset('assets/images/onboarding1.jpg', height: 300),
           SizedBox(height: 40),
           Text("Explore Thousands of Books",
-            style: getKohoStyle(weight: FontWeight.bold, size: 28),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28, color: Colors.black),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 16),
           Text(
             "Find your next favorite book in any genre",
-            style: getKohoStyle(weight: FontWeight.normal, size: 18),
+            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18, color: Colors.black),
             textAlign: TextAlign.center,
           ),
         ],
@@ -73,13 +63,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           SizedBox(height: 40),
           Text(
             "Save & Enjoy More",
-            style: getKohoStyle(weight: FontWeight.bold, size: 28),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28, color: Colors.black),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 16),
           Text(
             "Get exclusive deals and track your personal library",
-            style: getKohoStyle(weight: FontWeight.normal, size: 18),
+            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18, color: Colors.black),
             textAlign: TextAlign.center,
           ),
         ],
@@ -99,19 +89,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               SizedBox(height: 20),
               RichText(text: TextSpan(
                   text: 'Discover, Enjoy ',
-                  style: getKohoStyle(weight: FontWeight.bold, size: 30),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: Colors.black),
                   children: [
                     TextSpan(
                       text: 'and ',
-                      style: getKohoStyle(weight: FontWeight.normal, size: 30),
+                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 30, color: Colors.black),
                     ),
                     TextSpan(
                       text: '\nSave ',
-                      style: getKohoStyle(weight: FontWeight.bold, size: 30),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: Colors.black),
                     ),
                     TextSpan(
                       text: 'with every book',
-                      style: getKohoStyle(weight: FontWeight.normal, size: 30),
+                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 30, color: Colors.black),
                     ),
                   ]
               ),
