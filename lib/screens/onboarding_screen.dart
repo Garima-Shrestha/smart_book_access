@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_book_access/screens/login_screen.dart';
 import 'package:smart_book_access/screens/registration_screen.dart';
 
