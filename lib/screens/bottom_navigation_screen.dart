@@ -49,8 +49,8 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
           ],
 
         // backgroundColor: Colors.white,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.black,
+        // selectedItemColor: Colors.blue,
+        // unselectedItemColor: Colors.black,
 
         currentIndex: _selectedIndex,
           onTap: (index){
