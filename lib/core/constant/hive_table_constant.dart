@@ -6,8 +6,8 @@ class HiveTableConstant {
 
   // Table name
   // User
-  static const int userTypeId = 0;
-  static const String userTable = 'user_table';
+  static const int authTypeId = 0;
+  static const String authTable = 'user_table';
 
   // Book
   static const int bookTypeId = 1;
