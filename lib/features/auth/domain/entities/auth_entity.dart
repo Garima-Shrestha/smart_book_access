@@ -4,7 +4,7 @@ class AuthEntity extends Equatable {
   final String? authId;
   final String name;
   final String email;
-  final String? phone;
+  final String phone;
   final String? password;
   // final String? token;
 
@@ -12,7 +12,7 @@ class AuthEntity extends Equatable {
     this.authId,
     required this.name,
     required this.email,
-    this.phone,
+    required this.phone,
     this.password,
     // this.token
 });

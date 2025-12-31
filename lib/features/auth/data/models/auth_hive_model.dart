@@ -15,7 +15,7 @@ class AuthHiveModel extends HiveObject {
   @HiveField(2)
   final String email;
   @HiveField(3)
-  final String? phone;
+  final String phone;
   @HiveField(4)
   final String? password;
 
@@ -25,7 +25,7 @@ class AuthHiveModel extends HiveObject {
     String? authId,
     required this.name,
     required this.email,
-    this.phone,
+    required this.phone,
     this.password,
 }) : authId = authId ?? Uuid().v4();
 
