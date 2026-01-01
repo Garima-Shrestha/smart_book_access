@@ -200,6 +200,6 @@ flutter:
 
   # Assets
   assets:
-    - assets/icons/
+#    - assets/icons/
     - assets/images/
     - assets/svg/

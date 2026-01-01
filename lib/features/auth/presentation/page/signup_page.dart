@@ -70,7 +70,8 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
 
   void _navigateToLogin() {
-    Navigator.of(context).pop();
+    // Navigator.of(context).pop();
+    AppRoutes.pushReplacement(context, LoginPage());
   }
 
 
