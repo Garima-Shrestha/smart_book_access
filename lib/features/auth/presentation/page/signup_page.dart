@@ -179,47 +179,61 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                 Row(
                   children: [
                     // Country Code Dropdown
-                    SizedBox(
-                      width: 120,
-                      child: DropdownButtonFormField<String>(
-                        initialValue: _selectedCountryCode,
-                        decoration: const InputDecoration(
-                          labelText: 'Code',
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 16,
-                          ),
-                        ),
-                        items: _countryCodes.map((country) {
-                          return DropdownMenuItem<String>(
-                            value: country['code'],  // code -> +977
-                            child: Row(
-                              children: [
-                                Text(
-                                  country['flag']!,   // Countries flag
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  country['code']!,  // Text 'Code'
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                              ],
+                    Padding(
+                      padding: const EdgeInsets.only(left: 30.0),
+                      child: SizedBox(
+                        width: 120,
+                        child: DropdownButtonFormField<String>(
+                          initialValue: _selectedCountryCode,
+                          decoration: InputDecoration(
+                            labelText: 'Code',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedCountryCode = value!;
-                          });
-                        },
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: Color(0xFF00354B)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: Color(0xFF00354B)),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 16,
+                            ),
+                          ),
+                          items: _countryCodes.map((country) {
+                            return DropdownMenuItem<String>(
+                              value: country['code'],  // code -> +977
+                              child: Row(
+                                children: [
+                                  Text(
+                                    country['flag']!,   // Countries flag
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    country['code']!,  // Text 'Code'
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedCountryCode = value!;
+                            });
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
                     // Phone Number Field
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                        padding: const EdgeInsets.only(left: 10.0, right: 30.0),
                         child: TextFormField(
                           controller: _phoneNumberController,
                           keyboardType: TextInputType.phone,

@@ -147,16 +147,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
 
                   // Forgot Password
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      // onPressed: _handleForgotPassword,
-                      onPressed: (){},
-                      child: Text(
-                        'Forgot Password?',
-                        style: TextStyle(
-                          color: Color(0xFF2196F3),
-                          fontWeight: FontWeight.w600,
+                  Padding(
+                    padding: const EdgeInsets.only(right: 25.0, top: 6.0),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        // onPressed: _handleForgotPassword,
+                        onPressed: (){},
+                        child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            color: Color(0xFF1A68EE),
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
@@ -165,7 +168,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
 
                   // Signin Button
-                  SizedBox(height: 60),
+                  SizedBox(height: 40),
                   Padding(
                     padding: const EdgeInsets.only(left: 90.0, right: 90.0),
                     child: SizedBox(
@@ -180,7 +183,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
 
                   // SignUp Navigation
-                  SizedBox(height: 30),
+                  SizedBox(height: 25),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
