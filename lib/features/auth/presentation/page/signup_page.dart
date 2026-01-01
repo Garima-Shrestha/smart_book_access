@@ -217,33 +217,35 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                     ),
                     const SizedBox(width: 12),
                     // Phone Number Field
-                    Padding(
-                      padding: const EdgeInsets.only(left: 30.0, right: 30.0),
-                      child: TextFormField(
-                        controller: _phoneNumberController,
-                        keyboardType: TextInputType.phone,
-                        maxLength: 10,
-                        decoration: InputDecoration(
-                            labelText: "Phone number",
-                            hintText: "98000000",
-                            prefixIcon: Icon(Icons.phone, color: Color(0xFF00354B)),
-                            counterText: '', // hides 0/10
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            )
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                        child: TextFormField(
+                          controller: _phoneNumberController,
+                          keyboardType: TextInputType.phone,
+                          maxLength: 10,
+                          decoration: InputDecoration(
+                              labelText: "Phone number",
+                              hintText: "98000000",
+                              prefixIcon: Icon(Icons.phone, color: Color(0xFF00354B)),
+                              counterText: '', // hides 0/10
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              )
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Phone number is required.';
+                            }
+                            if (value.length != 10) {
+                              return 'Phone must be 10 digits';
+                            }
+                            if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+                              return 'Only numbers allowed';
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Phone number is required.';
-                          }
-                          if (value.length != 10) {
-                            return 'Phone must be 10 digits';
-                          }
-                          if (!RegExp(r'^\d{10}$').hasMatch(value)) {
-                            return 'Only numbers allowed';
-                          }
-                          return null;
-                        },
                       ),
                     ),
                   ],
