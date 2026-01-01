@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lost_n_found/features/auth/presentation/page/signup_page.dart';
+import 'package:lost_n_found/features/splash/presentation/page/splash_page.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -9,8 +9,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Novella',
       debugShowCheckedModeBanner: false,  // debug banner hatauna
-      // home: SplashScreen(),
-      home: SignupPage(),
+      home: SplashPage(),
     );
   }
 }

@@ -72,4 +72,14 @@ class HiveService {
     final users =_authBox.values.where((user) => user.email == email);
     return users.isNotEmpty;
   }
+
+  //-------------Splash Page---------------
+  // Returns true if user has logged in
+  // bool isUserLoggedIn() {
+  //   return _authBox.values.isNotEmpty;
+  // }
+  Future<bool> isUserLoggedIn() async {
+    final box = Hive.box<AuthHiveModel>(HiveTableConstant.authTable);
+    return box.values.isNotEmpty;
+  }
 }
