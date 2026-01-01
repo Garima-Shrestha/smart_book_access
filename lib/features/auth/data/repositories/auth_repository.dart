@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lost_n_found/core/error/failures.dart';
 import 'package:lost_n_found/features/auth/data/datasources/auth_datasource.dart';
-import 'package:lost_n_found/features/auth/data/local/auth_local_datasource.dart';
+import 'package:lost_n_found/features/auth/data/datasources/local/auth_local_datasource.dart';
 import 'package:lost_n_found/features/auth/data/models/auth_hive_model.dart';
 import 'package:lost_n_found/features/auth/domain/entities/auth_entity.dart';
 import 'package:lost_n_found/features/auth/domain/repositories/auth_repository.dart';
