@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lost_n_found/app/routes/app_routes.dart';
-import 'package:lost_n_found/features/dashboard/presentation/dashboard_page.dart';
+import 'package:lost_n_found/features/dashboard/presentation/page/dashboard_page.dart';
 import 'package:lost_n_found/features/onboarding/presentation/page/onboarding_page.dart';
-import 'package:lost_n_found/features/splash/presentation/state/splash_state.dart';
 import 'package:lost_n_found/features/splash/presentation/view_model/splash_view_model.dart';
 
 class SplashPage extends ConsumerStatefulWidget {

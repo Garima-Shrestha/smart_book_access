@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lost_n_found/app/theme/app_theme.dart';
 import 'package:lost_n_found/features/splash/presentation/page/splash_page.dart';
 
 class App extends StatelessWidget {
@@ -9,6 +10,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Novella',
       debugShowCheckedModeBanner: false,  // debug banner hatauna
+      theme: getApplicationTheme(),
       home: SplashPage(),
     );
   }

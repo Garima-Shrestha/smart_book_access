@@ -7,6 +7,7 @@ import 'package:lost_n_found/features/auth/presentation/page/signup_page.dart';
 import 'package:lost_n_found/features/auth/presentation/state/auth_state.dart';
 import 'package:lost_n_found/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:lost_n_found/core/widgets/my_button.dart';
+import 'package:lost_n_found/features/dashboard/presentation/page/dashboard_page.dart';
 
 class LoginPage extends ConsumerStatefulWidget  {
   const LoginPage({super.key});
@@ -55,7 +56,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     ref.listen<AuthState>(authViewModelProvider, (previous, next){
       if(next.status == AuthStatus.authenticated) {
-        // AppRoutes.pushReplacement(context, Homepage());
+        AppRoutes.pushReplacement(context, DashboardPage());
       } else if (next.status == AuthStatus.error && next.errorMessage != null){
         SnackbarUtils.showError(
           context, next.errorMessage!);
