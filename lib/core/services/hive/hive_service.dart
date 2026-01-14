@@ -49,7 +49,7 @@ class HiveService {
   }
 
   // Login
-  Future<AuthHiveModel?> loginUser(String email, String password) async {
+  Future<AuthHiveModel?> login(String email, String password) async {
     final users = _authBox.values.where(
         (user) => user.email == email && user.password == password,
     );
@@ -74,12 +74,8 @@ class HiveService {
   }
 
   //-------------Splash Page---------------
-  // Returns true if user has logged in
-  // bool isUserLoggedIn() {
-  //   return _authBox.values.isNotEmpty;
+  // Future<bool> isUserLoggedIn() async {
+  //   final box = Hive.box<AuthHiveModel>(HiveTableConstant.authTable);
+  //   return box.values.isNotEmpty;
   // }
-  Future<bool> isUserLoggedIn() async {
-    final box = Hive.box<AuthHiveModel>(HiveTableConstant.authTable);
-    return box.values.isNotEmpty;
-  }
 }
