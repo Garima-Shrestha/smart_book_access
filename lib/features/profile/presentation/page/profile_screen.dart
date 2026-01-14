@@ -1,0 +1,32 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lost_n_found/app/routes/app_routes.dart';
+import 'package:lost_n_found/app/theme/app_colors.dart';
+import 'package:lost_n_found/features/auth/presentation/page/login_page.dart';
+import 'package:lost_n_found/features/auth/presentation/state/auth_state.dart';
+import 'package:lost_n_found/features/auth/presentation/view_model/auth_view_model.dart';
+
+class ProfileScreen extends ConsumerWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(authViewModelProvider, (previous, next) {
+      if (next.status == AuthStatus.unauthenticated) {
+        AppRoutes.pushReplacement(context, const LoginPage());
+      }
+    });
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Profile')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            ref.read(authViewModelProvider.notifier).logout();
+          },
+          child: const Text('Logout'),
+        ),
+      ),
+    );
+  }
+}
