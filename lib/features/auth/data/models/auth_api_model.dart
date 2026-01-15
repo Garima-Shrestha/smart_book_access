@@ -1,4 +1,4 @@
-import 'package:lost_n_found/features/auth/domain/entities/auth_entity.dart';
+import 'package:smart_book_access/features/auth/domain/entities/auth_entity.dart';
 
 class AuthApiModel {
   final String? id;

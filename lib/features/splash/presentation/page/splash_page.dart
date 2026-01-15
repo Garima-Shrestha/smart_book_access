@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lost_n_found/app/routes/app_routes.dart';
-import 'package:lost_n_found/core/services/storage/user_session_service.dart';
-import 'package:lost_n_found/features/dashboard/presentation/page/dashboard_page.dart';
-import 'package:lost_n_found/features/onboarding/presentation/page/onboarding_page.dart';
+import 'package:smart_book_access/app/routes/app_routes.dart';
+import 'package:smart_book_access/core/services/storage/user_session_service.dart';
+import 'package:smart_book_access/features/dashboard/presentation/page/dashboard_page.dart';
+import 'package:smart_book_access/features/onboarding/presentation/page/onboarding_page.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});

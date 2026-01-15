@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lost_n_found/core/services/storage/user_session_service.dart';
+import 'package:smart_book_access/core/services/storage/user_session_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app/app.dart';
