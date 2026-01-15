@@ -15,7 +15,7 @@ class SignupPage extends ConsumerStatefulWidget  {
 }
 
 class _SignupPageState extends ConsumerState<SignupPage> {
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -46,7 +46,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _usernameController.dispose();
     _emailController.dispose();
     _phoneNumberController.dispose();
     _passwordController.dispose();
@@ -59,10 +59,12 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     if (_formkey.currentState!.validate()) {
       // Call view model register [Yo data lai view model ma pass garnu paryo]
       await ref.read(authViewModelProvider.notifier).register(
-          name: _nameController.text,
-          email: _emailController.text,
-          phone: '$_selectedCountryCode${_phoneNumberController.text}',
-          password: _passwordController.text
+          username: _usernameController.text.trim(),
+          email: _emailController.text.trim(),
+          countryCode: _selectedCountryCode.trim(),
+          // phone: '$_selectedCountryCode${_phoneNumberController.text}',
+          phone: _phoneNumberController.text.trim(),
+          password: _passwordController.text.trim()
       );
     }
   }
@@ -122,7 +124,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 30.0, right: 30.0),
                   child: TextFormField(
-                    controller: _nameController,
+                    controller: _usernameController,
                     keyboardType: TextInputType.name,
                     textCapitalization: TextCapitalization.words, // 1st word lai capital banaidinxa
                     decoration: InputDecoration(
@@ -236,7 +238,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                         child: TextFormField(
                           controller: _phoneNumberController,
                           keyboardType: TextInputType.phone,
-                          maxLength: 10,
+                          maxLength: 15,
                           decoration: InputDecoration(
                               labelText: "Phone number",
                               hintText: "98000000",
@@ -250,11 +252,8 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                             if (value == null || value.isEmpty) {
                               return 'Phone number is required.';
                             }
-                            if (value.length != 10) {
-                              return 'Phone must be 10 digits';
-                            }
-                            if (!RegExp(r'^\d{10}$').hasMatch(value)) {
-                              return 'Only numbers allowed';
+                            if (!RegExp(r'^\d{8,15}$').hasMatch(value)) {
+                              return 'Phone must be 8-15 digits';
                             }
                             return null;
                           },

@@ -22,22 +22,23 @@ class UserSessionService {
   static const String _keyUserId = 'user_id';
   static const String _keyUserName = 'user_name';
   static const String _keyUserEmail = 'user_email';
+  static const String _keyUserCountryCode = 'user_countryCode';
   static const String _keyUserPhoneNumber = 'user_phone_number';
 
   // Store user session data
   Future<void> saveUserSession({
     required String userId,
-    required String name,
+    required String username,
     required String email,
+    required String countryCode,
     required String phoneNumber,
   }) async{
       await _prefs.setBool(_keysIsLoggedIn, true);
       await _prefs.setString(_keyUserId, userId);
-      await _prefs.setString(_keyUserName, name);
+      await _prefs.setString(_keyUserName, username);
       await _prefs.setString(_keyUserEmail, email);
-      if (phoneNumber != null) {
-        await _prefs.setString(_keyUserPhoneNumber, phoneNumber);
-      }
+      await _prefs.setString(_keyUserCountryCode, countryCode);
+      await _prefs.setString(_keyUserPhoneNumber, phoneNumber);
   }
 
   // Clear User Sessions Data
@@ -46,6 +47,7 @@ class UserSessionService {
     await _prefs.remove(_keyUserId);
     await _prefs.remove(_keyUserName);
     await _prefs.remove(_keyUserEmail);
+    await _prefs.remove(_keyUserCountryCode);
     await _prefs.remove(_keyUserPhoneNumber);
   }
 
@@ -67,6 +69,11 @@ class UserSessionService {
   // Get current user email
   String? getCurrentUserEmail() {
     return _prefs.getString(_keyUserEmail);
+  }
+
+  // Get current user countryCode
+  String? getCurrentUserCountryCode() {
+    return _prefs.getString(_keyUserCountryCode);
   }
 
   // Get current user phone number
