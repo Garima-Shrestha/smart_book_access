@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lost_n_found/features/auth/domain/usecase/login_usecase.dart';
-import 'package:lost_n_found/features/auth/domain/usecase/logout_usecase.dart';
-import 'package:lost_n_found/features/auth/domain/usecase/register_usecase.dart';
-import 'package:lost_n_found/features/auth/presentation/state/auth_state.dart';
+import 'package:smart_book_access/features/auth/domain/usecase/login_usecase.dart';
+import 'package:smart_book_access/features/auth/domain/usecase/logout_usecase.dart';
+import 'package:smart_book_access/features/auth/domain/usecase/register_usecase.dart';
+import 'package:smart_book_access/features/auth/presentation/state/auth_state.dart';
 
 final authViewModelProvider = NotifierProvider<AuthViewModel, AuthState>(
     () => AuthViewModel(),

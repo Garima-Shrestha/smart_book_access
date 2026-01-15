@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lost_n_found/app/theme/app_theme.dart';
-import 'package:lost_n_found/features/splash/presentation/page/splash_page.dart';
+import 'package:smart_book_access/app/theme/app_theme.dart';
+import 'package:smart_book_access/features/splash/presentation/page/splash_page.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

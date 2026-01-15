@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lost_n_found/features/auth/presentation/page/login_page.dart';
-import 'package:lost_n_found/features/auth/presentation/page/signup_page.dart';
+import 'package:smart_book_access/features/auth/presentation/page/login_page.dart';
+import 'package:smart_book_access/features/auth/presentation/page/signup_page.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
   const OnboardingPage({super.key});

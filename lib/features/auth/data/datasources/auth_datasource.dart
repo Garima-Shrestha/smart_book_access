@@ -1,5 +1,5 @@
-import 'package:lost_n_found/features/auth/data/models/auth_api_model.dart';
-import 'package:lost_n_found/features/auth/data/models/auth_hive_model.dart';
+import 'package:smart_book_access/features/auth/data/models/auth_api_model.dart';
+import 'package:smart_book_access/features/auth/data/models/auth_hive_model.dart';
 
 abstract interface class IAuthLocalDataSource {
   Future<bool> register(AuthHiveModel model);

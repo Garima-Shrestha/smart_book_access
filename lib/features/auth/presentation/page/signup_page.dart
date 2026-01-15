@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lost_n_found/app/routes/app_routes.dart';
-import 'package:lost_n_found/core/utils/snackbar_utils.dart';
-import 'package:lost_n_found/core/widgets/my_button.dart';
-import 'package:lost_n_found/features/auth/domain/entities/auth_entity.dart';
-import 'package:lost_n_found/features/auth/presentation/page/login_page.dart';
-import 'package:lost_n_found/features/auth/presentation/state/auth_state.dart';
-import 'package:lost_n_found/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:smart_book_access/app/routes/app_routes.dart';
+import 'package:smart_book_access/core/utils/snackbar_utils.dart';
+import 'package:smart_book_access/core/widgets/my_button.dart';
+import 'package:smart_book_access/features/auth/presentation/page/login_page.dart';
+import 'package:smart_book_access/features/auth/presentation/state/auth_state.dart';
+import 'package:smart_book_access/features/auth/presentation/view_model/auth_view_model.dart';
 
 class SignupPage extends ConsumerStatefulWidget  {
   const SignupPage({super.key});

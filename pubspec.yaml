@@ -97,8 +97,8 @@
 #  # For details regarding fonts from package dependencies,
 #  # see https://flutter.dev/to/font-from-package
 
-name: lost_n_found
-description: "Lost and Found App - Softwarica College"
+name: smart_book_access
+description: "Digital Book Renting System"
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
