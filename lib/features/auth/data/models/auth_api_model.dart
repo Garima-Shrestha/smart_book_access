@@ -2,15 +2,17 @@ import 'package:smart_book_access/features/auth/domain/entities/auth_entity.dart
 
 class AuthApiModel {
   final String? id;
-  final String name;
+  final String username;
   final String email;
+  final String countryCode;
   final String phone;
   final String? password;
 
   AuthApiModel({
     this.id,
-    required this.name,
+    required this.username,
     required this.email,
+    required this.countryCode,
     required this.phone,
     this.password,
 });
@@ -18,8 +20,9 @@ class AuthApiModel {
   // toJSON
   Map<String, dynamic> toJson() {
     return {
-      "name": name,
+      "username": username,
       "email": email,
+      "countryCode": countryCode,
       "phone": phone,
       "password": password,
     };
@@ -29,8 +32,9 @@ class AuthApiModel {
   factory AuthApiModel.fromJson(Map<String, dynamic> json){
     return AuthApiModel(
         id: json['_id'] as String?,
-        name: json['name'] as String,
+        username: json['username'] as String,
         email: json['email'] as String,
+        countryCode: json['countryCode'] as String,
         phone: json['phone'] as String? ?? '',
         password: json['password'] as String?,
     );
@@ -40,8 +44,9 @@ class AuthApiModel {
   AuthEntity toEntity() {
     return AuthEntity(
         authId: id,
-        name: name,
+        username: username,
         email: email,
+        countryCode: countryCode,
         phone: phone,
         password: password,
     );
@@ -50,8 +55,9 @@ class AuthApiModel {
   // fromEntity
   factory AuthApiModel.fromEntity(AuthEntity entity) {
     return AuthApiModel(
-        name: entity.name,
+        username: entity.username,
         email: entity.email,
+        countryCode: entity.countryCode,
         phone: entity.phone,
         password: entity.password,
     );

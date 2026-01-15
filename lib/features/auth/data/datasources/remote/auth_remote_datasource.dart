@@ -52,8 +52,9 @@ class AuthRemoteDatasource implements IAuthRemoteDataSource {
       // Save user session
       await _userSessionService.saveUserSession(
         userId: user.id!,
-        name: user.name,
+        username: user.username,
         email: user.email,
+        countryCode: user.countryCode,
         phoneNumber: user.phone,
       );
       return user;

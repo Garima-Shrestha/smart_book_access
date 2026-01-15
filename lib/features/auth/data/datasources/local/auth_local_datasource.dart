@@ -50,8 +50,9 @@ class AuthLocalDatasource implements IAuthLocalDataSource{
       if (user != null && user.authId != null) {
         await _userSessionService.saveUserSession(
           userId: user.authId!,
-          name: user.name,
+          username: user.username,
           email: user.email,
+          countryCode: user.countryCode,
           phoneNumber: user.phone,
         );
       }
