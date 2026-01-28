@@ -1,5 +1,7 @@
 import 'package:smart_book_access/features/auth/domain/entities/auth_entity.dart';
 
+// part 'auth_api_model.g.dart';
+
 class AuthApiModel {
   final String? id;
   final String username;
