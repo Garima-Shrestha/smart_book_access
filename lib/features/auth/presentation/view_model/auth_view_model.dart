@@ -117,7 +117,7 @@ class AuthViewModel extends Notifier<AuthState>{
     required String email,
     required String countryCode,
     required String phone,
-    File? image,
+    File? imageUrl,
   }) async {
     state = state.copyWith(status: AuthStatus.loading);
 
@@ -126,7 +126,7 @@ class AuthViewModel extends Notifier<AuthState>{
       email: email,
       countryCode: countryCode,
       phone: phone,
-      imageUrl: image,
+      imageUrl: imageUrl,
     );
 
     final result = await _updateProfileUsecase.call(params);

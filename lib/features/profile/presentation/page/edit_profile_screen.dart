@@ -302,7 +302,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
-                      hintText: "example@email.com",
+                      hintText: "example@gmail.com",
                       hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       filled: true,

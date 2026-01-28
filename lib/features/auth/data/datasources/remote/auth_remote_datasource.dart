@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/core/api/api_client.dart';
 import 'package:smart_book_access/core/api/api_endpoints.dart';
+import 'package:smart_book_access/core/services/storage/token_service.dart';
 import 'package:smart_book_access/core/services/storage/user_session_service.dart';
 import 'package:smart_book_access/features/auth/data/datasources/auth_datasource.dart';
 import 'package:smart_book_access/features/auth/data/models/auth_api_model.dart';
@@ -13,19 +14,23 @@ final authRemoteDatasourceProvider = Provider<IAuthRemoteDataSource>((ref) {
   return AuthRemoteDatasource(
     apiClient: ref.read(apiClientProvider),
     userSessionService: ref.read(userSessionServiceProvider),
+    tokenService: ref.read(tokenServiceProvider),
   );
 });
 
 class AuthRemoteDatasource implements IAuthRemoteDataSource {
   final ApiClient _apiClient;
   final UserSessionService _userSessionService;
+  final TokenService _tokenService;
 
   AuthRemoteDatasource({
     required ApiClient apiClient,
     required UserSessionService userSessionService,
+    required TokenService tokenService,
   })
       : _apiClient = apiClient,
-        _userSessionService = userSessionService;
+        _userSessionService = userSessionService,
+        _tokenService = tokenService;
 
   @override
   Future<AuthApiModel?> getUserById(String authId) async {
@@ -60,6 +65,14 @@ class AuthRemoteDatasource implements IAuthRemoteDataSource {
         countryCode: user.countryCode,
         phoneNumber: user.phone,
       );
+
+      // save token
+      final token = response.data['token'] as String?;
+      await _tokenService.saveToken(token!);
+      // if (token != null) {
+      //   await _tokenService.saveToken(token);
+      // }
+
       return user;
     }
     return null;
@@ -82,7 +95,7 @@ class AuthRemoteDatasource implements IAuthRemoteDataSource {
   }
 
   @override
-  Future<bool> updateProfile(AuthApiModel user, File? image) async {
+  Future<bool> updateProfile(AuthApiModel user, File? imageUrl) async {
     try {
       Map<String, dynamic> formDataMap = {
         "username": user.username,
@@ -91,10 +104,10 @@ class AuthRemoteDatasource implements IAuthRemoteDataSource {
         "countryCode": user.countryCode,
       };
 
-      if (image != null) {
-        formDataMap["image"] = await MultipartFile.fromFile(
-          image.path,
-          filename: image.path.split('/').last,
+      if (imageUrl != null) {
+        formDataMap["imageUrl"] = await MultipartFile.fromFile(
+          imageUrl.path,
+          filename: imageUrl.path.split('/').last,
         );
       }
 
@@ -106,6 +119,14 @@ class AuthRemoteDatasource implements IAuthRemoteDataSource {
       );
 
       if (response.statusCode == 200 && response.data['success'] == true) {
+        await _userSessionService.saveUserSession(
+          userId: user.id!,
+          username: user.username,
+          email: user.email,
+          countryCode: user.countryCode,
+          phoneNumber: user.phone,
+          // If your server returns a new image URL, save that here too!
+        );
         return true;
       }
       return false;
