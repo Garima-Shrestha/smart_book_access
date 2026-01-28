@@ -81,4 +81,25 @@ class AuthLocalDatasource implements IAuthLocalDataSource{
       return Future.value(false);
     }
   }
+
+  @override
+  Future<bool> updateProfile(AuthHiveModel model) async {
+    try {
+      await _hiveService.updateUser(model);
+
+      if (model.authId != null) {
+        await _userSessionService.saveUserSession(
+          userId: model.authId!,
+          username: model.username,
+          email: model.email,
+          countryCode: model.countryCode,
+          phoneNumber: model.phone,
+          imageUrl: model.imageUrl,
+        );
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

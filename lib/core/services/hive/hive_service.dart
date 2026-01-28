@@ -73,6 +73,11 @@ class HiveService {
     return users.isNotEmpty;
   }
 
+  // Update User Profile
+  Future<void> updateUser(AuthHiveModel model) async {
+    await _authBox.put(model.authId, model);
+  }
+
   //-------------Splash Page---------------
   // Future<bool> isUserLoggedIn() async {
   //   final box = Hive.box<AuthHiveModel>(HiveTableConstant.authTable);

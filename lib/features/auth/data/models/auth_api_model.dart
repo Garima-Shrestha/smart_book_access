@@ -7,6 +7,7 @@ class AuthApiModel {
   final String countryCode;
   final String phone;
   final String? password;
+  final String? imageUrl;
 
   AuthApiModel({
     this.id,
@@ -15,6 +16,7 @@ class AuthApiModel {
     required this.countryCode,
     required this.phone,
     this.password,
+    this.imageUrl,
 });
 
   // toJSON
@@ -25,6 +27,7 @@ class AuthApiModel {
       "countryCode": countryCode,
       "phone": phone,
       "password": password,
+      "imageUrl": imageUrl,
     };
   }
 
@@ -37,6 +40,7 @@ class AuthApiModel {
         countryCode: json['countryCode'] as String,
         phone: json['phone'] as String? ?? '',
         password: json['password'] as String?,
+        imageUrl: json['imageUrl'] as String?,
     );
   }
 
@@ -49,6 +53,7 @@ class AuthApiModel {
         countryCode: countryCode,
         phone: phone,
         password: password,
+        imageUrl: imageUrl,
     );
   }
 
@@ -60,6 +65,7 @@ class AuthApiModel {
         countryCode: entity.countryCode,
         phone: entity.phone,
         password: entity.password,
+        imageUrl: entity.imageUrl,
     );
   }
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -132,6 +134,34 @@ class AuthRepository implements IAuthRepository {
       return const Left(LocalDatabaseFailure(message:  'Failed to logout user'));
     } catch (e) {
       return Left(LocalDatabaseFailure(message:  e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> updateProfile(AuthEntity entity, {File? imageUrl}) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final apiModel = AuthApiModel.fromEntity(entity);
+        final result = await _authRemoteDataSource.updateProfile(apiModel, imageUrl);
+        return Right(result);
+      } on DioException catch (e) {
+        return Left(
+          ApiFailure(
+            message: e.response?.data['message'] ?? 'Profile update failed',
+            statusCode: e.response?.statusCode,
+          ),
+        );
+      } catch (e) {
+        return Left(ApiFailure(message: e.toString()));
+      }
+    } else {
+      try {
+        final model = AuthHiveModel.fromEntity(entity);
+        final result = await _authDataSource.updateProfile(model);
+        return Right(result);
+      } catch (e) {
+        return Left(LocalDatabaseFailure(message: e.toString()));
+      }
     }
   }
 }

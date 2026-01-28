@@ -20,6 +20,8 @@ class AuthHiveModel extends HiveObject {
   final String phone;
   @HiveField(5)
   final String? password;
+  @HiveField(6)
+  final String? imageUrl;
 
 
   // Constructor
@@ -30,6 +32,7 @@ class AuthHiveModel extends HiveObject {
     required this.countryCode,
     required this.phone,
     this.password,
+    this.imageUrl,
 }) : authId = authId ?? Uuid().v4();
 
 
@@ -42,6 +45,7 @@ class AuthHiveModel extends HiveObject {
         countryCode: entity.countryCode,
         phone: entity.phone,
         password: entity.password,
+        imageUrl: entity.imageUrl,
     );
   }
 
@@ -54,6 +58,7 @@ class AuthHiveModel extends HiveObject {
         countryCode: countryCode,
         phone: phone,
         password: password,
+        imageUrl: imageUrl,
     );
   }
 

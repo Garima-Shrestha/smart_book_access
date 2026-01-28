@@ -24,6 +24,7 @@ class UserSessionService {
   static const String _keyUserEmail = 'user_email';
   static const String _keyUserCountryCode = 'user_countryCode';
   static const String _keyUserPhoneNumber = 'user_phone_number';
+  static const String _keyUserImageUrl = 'user_image_url';
 
   // Store user session data
   Future<void> saveUserSession({
@@ -32,6 +33,7 @@ class UserSessionService {
     required String email,
     required String countryCode,
     required String phoneNumber,
+    String? imageUrl,
   }) async{
       await _prefs.setBool(_keysIsLoggedIn, true);
       await _prefs.setString(_keyUserId, userId);
@@ -39,6 +41,9 @@ class UserSessionService {
       await _prefs.setString(_keyUserEmail, email);
       await _prefs.setString(_keyUserCountryCode, countryCode);
       await _prefs.setString(_keyUserPhoneNumber, phoneNumber);
+      if (imageUrl != null) {
+        await _prefs.setString(_keyUserImageUrl, imageUrl);
+      }
   }
 
   // Clear User Sessions Data
@@ -49,6 +54,7 @@ class UserSessionService {
     await _prefs.remove(_keyUserEmail);
     await _prefs.remove(_keyUserCountryCode);
     await _prefs.remove(_keyUserPhoneNumber);
+    await _prefs.remove(_keyUserImageUrl);
   }
 
   // Check if user is logged in
@@ -81,4 +87,8 @@ class UserSessionService {
     return _prefs.getString(_keyUserPhoneNumber);
   }
 
+  // Get current user image URL
+  String? getCurrentUserImageUrl() {
+    return _prefs.getString(_keyUserImageUrl);
+  }
 }

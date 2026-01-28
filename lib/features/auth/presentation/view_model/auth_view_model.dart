@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/features/auth/domain/usecase/login_usecase.dart';
 import 'package:smart_book_access/features/auth/domain/usecase/logout_usecase.dart';
 import 'package:smart_book_access/features/auth/domain/usecase/register_usecase.dart';
+import 'package:smart_book_access/features/auth/domain/usecase/update_profile_usecase.dart';
 import 'package:smart_book_access/features/auth/presentation/state/auth_state.dart';
 
 final authViewModelProvider = NotifierProvider<AuthViewModel, AuthState>(
@@ -12,6 +15,7 @@ class AuthViewModel extends Notifier<AuthState>{
   late final RegisterUsecase _registerUsecase;
   late final LoginUsecase _loginUsecase;
   late final LogoutUsecase _logoutUsecase;
+  late final UpdateProfileUsecase _updateProfileUsecase;
 
 
   @override
@@ -19,6 +23,7 @@ class AuthViewModel extends Notifier<AuthState>{
     _registerUsecase = ref.read(registerUsecaseProvider);
     _loginUsecase = ref.read(loginUsecaseProvider);
     _logoutUsecase = ref.read(logoutUsecaseProvider);
+    _updateProfileUsecase = ref.read(updateProfileUsecaseProvider);
     return AuthState();
   }
 
@@ -103,5 +108,37 @@ class AuthViewModel extends Notifier<AuthState>{
 
   void clearError() {
     state = state.copyWith(errorMessage: null);
+  }
+
+
+  // Update Profile
+  Future<void> updateProfile({
+    required String username,
+    required String email,
+    required String countryCode,
+    required String phone,
+    File? image,
+  }) async {
+    state = state.copyWith(status: AuthStatus.loading);
+
+    final params = UpdateProfileUsecaseParams(
+      username: username,
+      email: email,
+      countryCode: countryCode,
+      phone: phone,
+      imageUrl: image,
+    );
+
+    final result = await _updateProfileUsecase.call(params);
+
+    result.fold(
+          (failure) => state = state.copyWith(
+        status: AuthStatus.error,
+        errorMessage: failure.message,
+      ),
+          (success) {
+        state = state.copyWith(status: AuthStatus.updated);
+      },
+    );
   }
 }
