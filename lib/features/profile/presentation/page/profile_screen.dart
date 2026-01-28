@@ -22,6 +22,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final authState = ref.watch(authViewModelProvider);
     final user = authState.authEntity;
 
+    final bool hasValidImage = user?.imageUrl != null &&
+        user!.imageUrl!.startsWith('http') &&
+        user.imageUrl!.length > 10;
+
     // Listen for logout state to navigate back to login
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (next.status == AuthStatus.unauthenticated) {
@@ -62,17 +66,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       backgroundColor: Colors.white,
                       child: CircleAvatar(
                         radius: 48,
-                        backgroundColor: user?.profilePicture == null || user!.profilePicture!.isEmpty
+                        // We keep avatarBlue if there is no image to show the letter clearly
+                        backgroundColor: !hasValidImage
                             ? avatarBlue
                             : Colors.transparent,
-                        // If profilePicture exists, use NetworkImage, else null
-                        backgroundImage: user?.profilePicture != null && user!.profilePicture!.isNotEmpty
-                            ? NetworkImage(user.profilePicture!)
+                        // If imageUrl exists and is valid, use NetworkImage, else null
+                        backgroundImage: hasValidImage
+                            ? NetworkImage(user!.imageUrl!)
                             : null,
-                        child: user?.profilePicture == null || user!.profilePicture!.isEmpty
                         // If no image, display the 1st letter of username
+                        child: !hasValidImage
                             ? Text(
-                          user?.username != null ? user!.username[0].toUpperCase() : "U",
+                          (user?.username != null && user!.username.trim().isNotEmpty)
+                              ? user.username.trim()[0].toUpperCase()
+                              : "U",
                           style: TextStyle(fontSize: 38, fontWeight: FontWeight.bold, color: primaryBlue),
                         )
                             : null,

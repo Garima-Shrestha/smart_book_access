@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:smart_book_access/features/auth/presentation/view_model/auth_view_model.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
@@ -19,6 +21,15 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final Color darkBlue = const Color(0xFF003049);
   final Color lightBg = const Color(0xFFF7F9FC);
 
+  String _selectedCountryCode = '+977'; // Default Nepal
+  final List<Map<String, String>> _countryCodes = [
+    {'code': '+977', 'name': 'Nepal', 'flag': '🇳🇵'},
+    {'code': '+91', 'name': 'India', 'flag': '🇮🇳'},
+    {'code': '+1', 'name': 'USA', 'flag': '🇺🇸'},
+    {'code': '+44', 'name': 'UK', 'flag': '🇬🇧'},
+    {'code': '+86', 'name': 'China', 'flag': '🇨🇳'},
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -26,6 +37,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     _nameController.text = user?.username ?? "";
     _emailController.text = user?.email ?? "";
     _phoneController.text = user?.phone ?? "";
+    _selectedCountryCode = user?.countryCode ?? "+977";
   }
 
   @override
@@ -36,9 +48,133 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     super.dispose();
   }
 
+  // Permission
+  final ImagePicker _imagePicker = ImagePicker();
+  File? _profileImage; // To store the selected file locally for preview
+
+  // Updated Permission Check
+  Future<bool> _checkPermission(Permission permission) async {
+    final status = await permission.status;
+    if (status.isGranted) return true;
+
+    if (status.isDenied) {
+      final result = await permission.request();
+      return result.isGranted;
+    }
+
+    if (status.isPermanentlyDenied) {
+      _showPermissionDeniedDialog();
+      return false;
+    }
+    return false;
+  }
+
+  void _showPermissionDeniedDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Permission Required"),
+        content: const Text("To update your profile picture, please enable camera/gallery access in your settings."),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel")
+          ),
+          TextButton(
+              onPressed: () {
+                openAppSettings(); // Requires permission_handler package
+                Navigator.pop(context);
+              },
+              child: const Text("Settings")
+          ),
+        ],
+      ),
+    );
+  }
+
+  // From Camera
+  Future<void> _pickFromCamera() async {
+    final hasPermission = await _checkPermission(Permission.camera);
+    if (!hasPermission) return;
+
+    final XFile? photo = await _imagePicker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 80,
+    );
+
+    if (photo != null) {
+      setState(() {
+        _profileImage = File(photo.path);
+      });
+    }
+  }
+
+  // From Gallery
+  Future<void> _pickFromGallery() async {
+    final XFile? image = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    if (image != null) {
+      setState(() {
+        _profileImage = File(image.path);
+      });
+    }
+  }
+
+  // code for dialogBox : showDialog for menu
+  Future<void> _pickMedia() async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(20),
+          )
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Change Profile Picture",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 15),
+              ListTile(
+                leading: Icon(Icons.camera_alt, color: primaryBlue),
+                title: const Text("Open Camera"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickFromCamera();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_library, color: primaryBlue),
+                title: const Text("Open Gallery"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickFromGallery();
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(authViewModelProvider).authEntity;
+
+    final bool hasValidImage = user?.imageUrl != null &&
+        user!.imageUrl!.startsWith('http') &&
+        user.imageUrl!.length > 10;
 
     return Scaffold(
       backgroundColor: lightBg,
@@ -72,13 +208,21 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     child: CircleAvatar(
                       radius: 60,
                       backgroundColor: const Color(0xFFE3F2FD),
-                      backgroundImage: (user?.profilePicture != null && user!.profilePicture!.isNotEmpty)
-                          ? NetworkImage(user.profilePicture!)
-                          : null,
-                      child: (user?.profilePicture == null || user!.profilePicture!.isEmpty)
+                      // If imageUrl exists and is valid, use NetworkImage, else null
+                      backgroundImage: _profileImage != null
+                          ? FileImage(_profileImage!)
+                          : (hasValidImage ? NetworkImage(user!.imageUrl!) : null) as ImageProvider?,
+                      // If no image, display the 1st letter of username
+                      child: (_profileImage == null && !hasValidImage)
                           ? Text(
-                        user?.username != null ? user!.username[0].toUpperCase() : "U",
-                        style: TextStyle(fontSize: 45, fontWeight: FontWeight.bold, color: primaryBlue),
+                        (user?.username != null && user!.username.trim().isNotEmpty)
+                            ? user.username.trim()[0].toUpperCase()
+                            : "U",
+                        style: TextStyle(
+                            fontSize: 45,
+                            fontWeight: FontWeight.bold,
+                            color: primaryBlue
+                        ),
                       )
                           : null,
                     ),
@@ -87,9 +231,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     bottom: 0,
                     right: 0,
                     child: GestureDetector(
-                      onTap: () {
-                        // Logic to pick image from gallery/camera
-                      },
+                      onTap: () => _pickMedia(),
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
@@ -184,24 +326,67 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87),
                   ),
                   const SizedBox(height: 8),
-                  TextFormField(
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                      hintText: "9000000000",
-                      hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      filled: true,
-                      fillColor: Colors.white,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Country Code
+                      SizedBox(
+                        width: 100,
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedCountryCode,
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                            filled: true,
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: primaryBlue, width: 1.5),
+                            ),
+                          ),
+                          items: _countryCodes.map((country) {
+                            return DropdownMenuItem<String>(
+                              value: country['code'],
+                              child: Text(
+                                "${country['flag']} ${country['code']}",
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedCountryCode = value!;
+                            });
+                          },
+                        ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: primaryBlue, width: 1.5),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _phoneController,
+                          keyboardType: TextInputType.phone,
+                          decoration: InputDecoration(
+                            hintText: "9000000000",
+                            hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            filled: true,
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: primaryBlue, width: 1.5),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
 
                   const SizedBox(height: 30),
