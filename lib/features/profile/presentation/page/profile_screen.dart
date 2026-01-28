@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/app/routes/app_routes.dart';
@@ -22,9 +24,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final authState = ref.watch(authViewModelProvider);
     final user = authState.authEntity;
 
-    final bool hasValidImage = user?.imageUrl != null &&
-        user!.imageUrl!.startsWith('http') &&
-        user.imageUrl!.length > 10;
+    ImageProvider? getImageProvider() {
+      final savedPath = user?.imageUrl;
+      if (savedPath == null || savedPath.isEmpty) return null;
+
+      // If the image is NOT on this phone, download it from our Node.js server
+      if (savedPath.startsWith('/uploads')) {
+        return NetworkImage("http://10.0.2.2:5050$savedPath");
+      }
+
+      // Handle local file paths
+      if (savedPath.startsWith('/') && !savedPath.startsWith('/uploads')) {
+        final localFile = File(savedPath);
+        return localFile.existsSync() ? FileImage(localFile) : null;
+      }
+
+      // Fallback for standard web URLs
+      if (savedPath.startsWith('http')) {
+        return NetworkImage(savedPath);
+      }
+      return null;
+    }
+
+    final imageProvider = getImageProvider();
 
     // Listen for logout state to navigate back to login
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
@@ -66,16 +88,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       backgroundColor: Colors.white,
                       child: CircleAvatar(
                         radius: 48,
-                        // We keep avatarBlue if there is no image to show the letter clearly
-                        backgroundColor: !hasValidImage
+                        // We keep avatarBlue if there  is no image to show the letter clearly
+                        backgroundColor: imageProvider == null
                             ? avatarBlue
                             : Colors.transparent,
                         // If imageUrl exists and is valid, use NetworkImage, else null
-                        backgroundImage: hasValidImage
-                            ? NetworkImage(user!.imageUrl!)
-                            : null,
+                          backgroundImage: imageProvider,
                         // If no image, display the 1st letter of username
-                        child: !hasValidImage
+                        child: imageProvider == null
                             ? Text(
                           (user?.username != null && user!.username.trim().isNotEmpty)
                               ? user.username.trim()[0].toUpperCase()

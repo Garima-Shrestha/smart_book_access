@@ -42,7 +42,8 @@ class AuthApiModel {
         countryCode: json['countryCode'] as String,
         phone: json['phone'] as String? ?? '',
         password: json['password'] as String?,
-        imageUrl: json['imageUrl'] as String?,
+        // imageUrl: json['imageUrl'] as String?,
+        imageUrl: (json['imageUrl'] ?? json['image']) as String?,
     );
   }
 
@@ -62,6 +63,7 @@ class AuthApiModel {
   // fromEntity
   factory AuthApiModel.fromEntity(AuthEntity entity) {
     return AuthApiModel(
+        id: entity.authId,
         username: entity.username,
         email: entity.email,
         countryCode: entity.countryCode,

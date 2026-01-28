@@ -20,14 +20,14 @@ class SnackbarUtils {
     );
   }
 
-  // static void showInfo(BuildContext context, String message) {
-  //   _showSnackBar(
-  //     context,
-  //     message,
-  //     backgroundColor: AppColors.primary,
-  //     icon: Icons.info_outline_rounded,
-  //   );
-  // }
+  static void showInfo(BuildContext context, String message) {
+    _showSnackBar(
+      context,
+      message,
+      backgroundColor: Colors.blue,
+      icon: Icons.info_outline_rounded,
+    );
+  }
 
   static void showWarning(BuildContext context, String message) {
     _showSnackBar(

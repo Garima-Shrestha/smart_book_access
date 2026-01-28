@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:smart_book_access/core/utils/snackbar_utils.dart';
+import 'package:smart_book_access/features/auth/presentation/state/auth_state.dart';
 import 'package:smart_book_access/features/auth/presentation/view_model/auth_view_model.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
@@ -168,13 +170,63 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   }
 
 
+  // Check if any text field or the profile image is different from the original data.
+  bool _hasChanges() {
+    final user = ref.read(authViewModelProvider).authEntity;
+
+    // Check if any text field value is different from the stored user data
+    final nameChanged = _nameController.text.trim() != user?.username;
+    final emailChanged = _emailController.text.trim() != user?.email;
+    final phoneChanged = _phoneController.text.trim() != user?.phone;
+    final countryChanged = _selectedCountryCode != user?.countryCode;
+
+    // If _profileImage is not null, it means the user has picked a new file
+    final imageChanged = _profileImage != null;
+    return nameChanged || emailChanged || phoneChanged || countryChanged || imageChanged;
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authViewModelProvider).authEntity;
+    final authState = ref.watch(authViewModelProvider);
+    final user = authState.authEntity;
 
-    final bool hasValidImage = user?.imageUrl != null &&
-        user!.imageUrl!.startsWith('http') &&
-        user.imageUrl!.length > 10;
+    // This part listens for errors/success and shows Snackbars
+    ref.listen<AuthState>(authViewModelProvider, (previous, next) {
+      if (next.status == AuthStatus.updated) {
+        SnackbarUtils.showSuccess(context, "Profile updated successfully!");
+        ref.read(authViewModelProvider.notifier).clearError();
+      } else if (next.status == AuthStatus.error && next.errorMessage != null) {
+        SnackbarUtils.showError(context, next.errorMessage!);
+        ref.read(authViewModelProvider.notifier).clearError();
+      }
+    });
+
+
+    ImageProvider? getImageProvider() {
+      // 1. If a new image was just picked from gallery/camera, show that first
+      if (_profileImage != null) {
+        return FileImage(_profileImage!);
+      }
+
+      final savedPath = user?.imageUrl;
+      if (savedPath != null && savedPath.isNotEmpty) {
+        // If the image is NOT on this phone, download it from our Node.js server
+        if (savedPath.startsWith('/uploads')) {
+          return NetworkImage("http://10.0.2.2:5050$savedPath");
+        }
+        // If the image is saved on THIS phone (after we just picked it), load it from the phone's memory
+        if (savedPath.startsWith('/') && !savedPath.startsWith('/uploads')) {
+          final localFile = File(savedPath);
+          if (localFile.existsSync()) {
+            return FileImage(localFile);
+          }
+        }
+        return NetworkImage("http://10.0.2.2:5050$savedPath");
+      }
+
+      return null;
+    }
 
     return Scaffold(
       backgroundColor: lightBg,
@@ -208,12 +260,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     child: CircleAvatar(
                       radius: 60,
                       backgroundColor: const Color(0xFFE3F2FD),
-                      // If imageUrl exists and is valid, use NetworkImage, else null
-                      backgroundImage: _profileImage != null
-                          ? FileImage(_profileImage!)
-                          : (hasValidImage ? NetworkImage(user!.imageUrl!) : null) as ImageProvider?,
+                      backgroundImage: getImageProvider(),
+
                       // If no image, display the 1st letter of username
-                      child: (_profileImage == null && !hasValidImage)
+                      child: getImageProvider() == null
                           ? Text(
                         (user?.username != null && user!.username.trim().isNotEmpty)
                             ? user.username.trim()[0].toUpperCase()
@@ -331,7 +381,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     children: [
                       // Country Code
                       SizedBox(
-                        width: 100,
+                        width: 120,
                         child: DropdownButtonFormField<String>(
                           value: _selectedCountryCode,
                           isExpanded: true,
@@ -353,7 +403,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                               value: country['code'],
                               child: Text(
                                 "${country['flag']} ${country['code']}",
-                                style: const TextStyle(fontSize: 12),
+                                style: const TextStyle(fontSize: 14),
                               ),
                             );
                           }).toList(),
@@ -396,15 +446,37 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Logic to save changes
+                      onPressed: authState.status == AuthStatus.loading
+                          ? null
+                          : () {
+                        // Stop the update process if the user hasn't made any changes.
+                        if (!_hasChanges()) {
+                          SnackbarUtils.showInfo(context, "No changes detected to update.");
+                          return; // Stop here, don't call the API
+                        }
+
+                        // Call the ViewModel
+                        ref.read(authViewModelProvider.notifier).updateProfile(
+                          username: _nameController.text.trim(),
+                          email: _emailController.text.trim(),
+                          countryCode: _selectedCountryCode,
+                          phone: _phoneController.text.trim(),
+                          imageUrl: _profileImage,
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: darkBlue,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         elevation: 0,
                       ),
-                      child: const Text(
+                      // Show a loader if status is loading, otherwise show text
+                      child: authState.status == AuthStatus.loading
+                          ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                          : const Text(
                         "Edit Profile",
                         style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
                       ),

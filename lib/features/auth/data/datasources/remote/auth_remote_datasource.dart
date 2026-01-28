@@ -64,6 +64,7 @@ class AuthRemoteDatasource implements IAuthRemoteDataSource {
         email: user.email,
         countryCode: user.countryCode,
         phoneNumber: user.phone,
+        imageUrl: user.imageUrl,
       );
 
       // save token
@@ -96,8 +97,10 @@ class AuthRemoteDatasource implements IAuthRemoteDataSource {
 
   @override
   Future<bool> updateProfile(AuthApiModel user, File? imageUrl) async {
-    try {
+      final token = await _tokenService.getToken();
+
       Map<String, dynamic> formDataMap = {
+        "id": user.id,
         "username": user.username,
         "email": user.email,
         "phone": user.phone,
@@ -105,7 +108,7 @@ class AuthRemoteDatasource implements IAuthRemoteDataSource {
       };
 
       if (imageUrl != null) {
-        formDataMap["imageUrl"] = await MultipartFile.fromFile(
+        formDataMap["image"] = await MultipartFile.fromFile(
           imageUrl.path,
           filename: imageUrl.path.split('/').last,
         );
@@ -116,22 +119,27 @@ class AuthRemoteDatasource implements IAuthRemoteDataSource {
       final response = await _apiClient.putMultipart(
         ApiEndpoints.updateProfile,
         formData: formData,
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
       );
 
       if (response.statusCode == 200 && response.data['success'] == true) {
+        final updatedImageUrl = response.data['data']['image'] ?? user.imageUrl;
+
         await _userSessionService.saveUserSession(
-          userId: user.id!,
+          // userId: user.id!,
+          userId: user.id ?? '',
           username: user.username,
           email: user.email,
           countryCode: user.countryCode,
           phoneNumber: user.phone,
-          // If your server returns a new image URL, save that here too!
+          imageUrl: updatedImageUrl,
         );
         return true;
       }
       return false;
-    } catch (e) {
-      return false;
-    }
   }
 }

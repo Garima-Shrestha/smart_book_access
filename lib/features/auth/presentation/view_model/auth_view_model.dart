@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_book_access/core/services/storage/user_session_service.dart';
+import 'package:smart_book_access/features/auth/domain/entities/auth_entity.dart';
 import 'package:smart_book_access/features/auth/domain/usecase/login_usecase.dart';
 import 'package:smart_book_access/features/auth/domain/usecase/logout_usecase.dart';
 import 'package:smart_book_access/features/auth/domain/usecase/register_usecase.dart';
@@ -24,7 +26,26 @@ class AuthViewModel extends Notifier<AuthState>{
     _loginUsecase = ref.read(loginUsecaseProvider);
     _logoutUsecase = ref.read(logoutUsecaseProvider);
     _updateProfileUsecase = ref.read(updateProfileUsecaseProvider);
+    Future.microtask(() => _init());
     return AuthState();
+  }
+
+  Future<void> _init() async {
+    final sessionService = ref.read(userSessionServiceProvider);
+
+    if (sessionService.isLoggedIn()) {
+      state = state.copyWith(
+        status: AuthStatus.authenticated,
+        authEntity: AuthEntity(
+          authId: sessionService.getCurrentUserId() ?? '',
+          username: sessionService.getCurrentUserName() ?? '',
+          email: sessionService.getCurrentUserEmail() ?? '',
+          phone: sessionService.getCurrentUserPhoneNumber() ?? '',
+          countryCode: sessionService.getCurrentUserCountryCode() ?? '',
+          imageUrl: sessionService.getCurrentUserImageUrl(),
+        ),
+      );
+    }
   }
 
   Future<void> register ({
@@ -119,7 +140,7 @@ class AuthViewModel extends Notifier<AuthState>{
     required String phone,
     File? imageUrl,
   }) async {
-    state = state.copyWith(status: AuthStatus.loading);
+    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
 
     final params = UpdateProfileUsecaseParams(
       username: username,
@@ -136,8 +157,34 @@ class AuthViewModel extends Notifier<AuthState>{
         status: AuthStatus.error,
         errorMessage: failure.message,
       ),
-          (success) {
-        state = state.copyWith(status: AuthStatus.updated);
+          (success) async {
+            final sessionService = ref.read(userSessionServiceProvider);
+
+            await sessionService.saveUserSession(
+              userId: state.authEntity?.authId ?? '',
+              username: username,
+              email: email,
+              countryCode: countryCode,
+              phoneNumber: phone,
+              // If a new image was picked, save its local path, otherwise keep the old one
+              imageUrl: imageUrl?.path ?? state.authEntity?.imageUrl,
+            );
+
+            state = state.copyWith(
+              status: AuthStatus.updated,
+              errorMessage: null,
+              authEntity: AuthEntity(
+                authId: state.authEntity?.authId, // Keep existing ID
+                username: username,
+                email: email,
+                phone: phone,
+                countryCode: countryCode,
+                // Keep existing image or handle new one if needed
+                // imageUrl: state.authEntity?.imageUrl,
+
+                imageUrl: imageUrl?.path ?? state.authEntity?.imageUrl,
+              ),
+            );
       },
     );
   }

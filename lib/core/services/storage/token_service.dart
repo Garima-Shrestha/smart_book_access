@@ -4,7 +4,8 @@ import 'package:smart_book_access/core/services/storage/user_session_service.dar
 
 // provider
 final tokenServiceProvider = Provider<TokenService>((ref) {
-  final prefs = ref.read(sharedPreferencesProvider);
+  // final prefs = ref.read(sharedPreferencesProvider);
+  final prefs = ref.watch(sharedPreferencesProvider);
   return TokenService(prefs: prefs);
 });
 
