@@ -135,7 +135,23 @@ class ApiClient {
       onSendProgress: onSendProgress,
     );
   }
+
+  // PUT request for multipart/file uploads
+  Future<Response> putMultipart(
+      String path, {
+        required FormData formData,
+        Options? options,
+        ProgressCallback? onSendProgress,
+      }) async {
+    return _dio.put(
+      path,
+      data: formData,
+      options: options,
+      onSendProgress: onSendProgress,
+    );
+  }
 }
+
 
 // Auth Interceptor to add JWT token to requests
 class _AuthInterceptor extends Interceptor {
