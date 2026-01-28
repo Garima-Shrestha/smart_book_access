@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/core/api/api_client.dart';
 import 'package:smart_book_access/core/api/api_endpoints.dart';
@@ -76,5 +79,38 @@ class AuthRemoteDatasource implements IAuthRemoteDataSource {
     }
 
     return user;
+  }
+
+  @override
+  Future<bool> updateProfile(AuthApiModel user, File? image) async {
+    try {
+      Map<String, dynamic> formDataMap = {
+        "username": user.username,
+        "email": user.email,
+        "phone": user.phone,
+        "countryCode": user.countryCode,
+      };
+
+      if (image != null) {
+        formDataMap["image"] = await MultipartFile.fromFile(
+          image.path,
+          filename: image.path.split('/').last,
+        );
+      }
+
+      FormData formData = FormData.fromMap(formDataMap);
+
+      final response = await _apiClient.putMultipart(
+        ApiEndpoints.updateProfile,
+        formData: formData,
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 }
