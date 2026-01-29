@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:smart_book_access/features/auth/presentation/page/profileStatus/profile_screen.dart';
 import 'package:smart_book_access/features/history/presentation/page/history_screen.dart';
 import 'package:smart_book_access/features/home/presentation/page/home_screen.dart';
 import 'package:smart_book_access/features/library/presentation/page/mylibrary_screen.dart';
-import 'package:smart_book_access/features/profile/presentation/page/profile_screen.dart';
 
 
 class DashboardPage extends StatefulWidget {

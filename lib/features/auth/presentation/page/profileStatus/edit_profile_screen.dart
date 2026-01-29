@@ -78,7 +78,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Permission Required"),
-        content: const Text("To update your profile picture, please enable camera/gallery access in your settings."),
+        content: const Text("To update your privacy picture, please enable camera/gallery access in your settings."),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
@@ -174,7 +174,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   }
 
 
-  // Check if any text field or the profile image is different from the original data.
+  // Check if any text field or the privacy image is different from the original data.
   bool _hasChanges() {
     final user = ref.read(authViewModelProvider).authEntity;
 
@@ -219,21 +219,40 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       }
 
       final savedPath = user?.imageUrl;
-      if (savedPath != null && savedPath.isNotEmpty) {
-        // If the image is NOT on this phone, download it from our Node.js server
-        if (savedPath.startsWith('/uploads')) {
-          NetworkImage("http://10.0.2.2:5050$savedPath");
-        }
-        // If the image is saved on THIS phone (after we just picked it), load it from the phone's memory
-        if (savedPath.startsWith('/') && !savedPath.startsWith('/uploads')) {
-          final localFile = File(savedPath);
-          if (localFile.existsSync()) {
-            return FileImage(localFile);
-          }
-        }
-        NetworkImage("http://10.0.2.2:5050$savedPath");
+      // If there is no image path saved in the user profile, return null (shows initials)
+      if (savedPath == null || savedPath.isEmpty) return null;
+
+      // if (savedPath != null && savedPath.isNotEmpty) {
+      //   // If the image is NOT on this phone, download it from our Node.js server
+      //   if (savedPath.startsWith('/uploads')) {
+      //     NetworkImage("http://10.0.2.2:5050$savedPath");
+      //   }
+      //   // If the image is saved on THIS phone (after we just picked it), load it from the phone's memory
+      //   if (savedPath.startsWith('/') && !savedPath.startsWith('/uploads')) {
+      //     final localFile = File(savedPath);
+      //     if (localFile.existsSync()) {
+      //       return FileImage(localFile);
+      //     }
+      //   }
+      //   NetworkImage("http://10.0.2.2:5050$savedPath");
+      // }
+
+
+      // Load from Backend (Node.js server)
+      if (savedPath.startsWith('/uploads')) {
+        return NetworkImage("http://10.0.2.2:5050$savedPath");
       }
 
+      // Load from Phone Storage (if path is local)
+      if (File(savedPath).existsSync()) {
+        return FileImage(File(savedPath));
+      }
+
+      // 4. Fallback: Try as a full network URL if applicable
+      if (savedPath.startsWith('http')) {
+        return NetworkImage(savedPath);
+      }
+      // Fallback: If none of the above match, show the initials.
       return null;
     }
 

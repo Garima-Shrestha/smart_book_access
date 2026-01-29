@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/app/routes/app_routes.dart';
 import 'package:smart_book_access/features/auth/presentation/page/login_page.dart';
+import 'package:smart_book_access/features/auth/presentation/page/profileStatus/edit_profile_screen.dart';
 import 'package:smart_book_access/features/auth/presentation/state/auth_state.dart';
 import 'package:smart_book_access/features/auth/presentation/view_model/auth_view_model.dart';
-import 'package:smart_book_access/features/profile/presentation/page/edit_profile_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -57,7 +57,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         AppRoutes.pushReplacement(context, const LoginPage());
       }
 
-      // Reset if the profile was updated (from the edit screen)
+      // Reset if the privacy was updated (from the edit screen)
       if (next.status == AuthStatus.updated) {
         setState(() {
           _imageLoadFailed = false;
@@ -165,13 +165,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     title: "Edit Profile",
                     subtitle: "Edit your information",
                     onTap: () => AppRoutes.push(context, const EditProfileScreen()),
-                  ),
-                  _buildMenuRow(
-                    icon: Icons.list_alt_rounded,
-                    iconColor: Colors.blueGrey,
-                    title: "Activity Overview",
-                    subtitle: "View your activity",
-                    onTap: () {},
                   ),
                   _buildMenuRow(
                     icon: Icons.edit_note_outlined,
