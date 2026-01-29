@@ -1,8 +1,12 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:smart_book_access/features/auth/domain/entities/auth_entity.dart';
 
-// part 'auth_api_model.g.dart';
+part 'auth_api_model.g.dart';
+
+@JsonSerializable()
 
 class AuthApiModel {
+  @JsonKey(name: '_id')
   final String? id;
   final String username;
   final String email;
@@ -21,31 +25,36 @@ class AuthApiModel {
     this.imageUrl,
 });
 
-  // toJSON
-  Map<String, dynamic> toJson() {
-    return {
-      "username": username,
-      "email": email,
-      "countryCode": countryCode,
-      "phone": phone,
-      "password": password,
-      "imageUrl": imageUrl,
-    };
-  }
+  factory AuthApiModel.fromJson(Map<String, dynamic> json) =>
+      _$AuthApiModelFromJson(json);
 
-  // fromJson
-  factory AuthApiModel.fromJson(Map<String, dynamic> json){
-    return AuthApiModel(
-        id: json['_id'] as String?,
-        username: json['username'] as String,
-        email: json['email'] as String,
-        countryCode: json['countryCode'] as String,
-        phone: json['phone'] as String? ?? '',
-        password: json['password'] as String?,
-        // imageUrl: json['imageUrl'] as String?,
-        imageUrl: (json['imageUrl'] ?? json['image']) as String?,
-    );
-  }
+  Map<String, dynamic> toJson() => _$AuthApiModelToJson(this);
+
+  // // toJSON
+  // Map<String, dynamic> toJson() {
+  //   return {
+  //     "username": username,
+  //     "email": email,
+  //     "countryCode": countryCode,
+  //     "phone": phone,
+  //     "password": password,
+  //     "imageUrl": imageUrl,
+  //   };
+  // }
+  //
+  // // fromJson
+  // factory AuthApiModel.fromJson(Map<String, dynamic> json){
+  //   return AuthApiModel(
+  //       id: json['_id'] as String?,
+  //       username: json['username'] as String,
+  //       email: json['email'] as String,
+  //       countryCode: json['countryCode'] as String,
+  //       phone: json['phone'] as String? ?? '',
+  //       password: json['password'] as String?,
+  //       // imageUrl: json['imageUrl'] as String?,
+  //       imageUrl: (json['imageUrl'] ?? json['image']) as String?,
+  //   );
+  // }
 
   // toEntity
   AuthEntity toEntity() {

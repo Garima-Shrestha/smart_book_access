@@ -19,6 +19,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final Color primaryBlue = const Color(0xFF1E88E5);
   final Color avatarBlue = const Color(0xFFE3F2FD);
 
+  bool _imageLoadFailed = false;
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
@@ -30,7 +32,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
       // If the image is NOT on this phone, download it from our Node.js server
       if (savedPath.startsWith('/uploads')) {
-        return NetworkImage("http://10.0.2.2:5050$savedPath");
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        return NetworkImage("http://10.0.2.2:5050$savedPath?v=$timestamp");
       }
 
       // Handle local file paths
@@ -52,6 +55,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (next.status == AuthStatus.unauthenticated) {
         AppRoutes.pushReplacement(context, const LoginPage());
+      }
+
+      // Reset if the profile was updated (from the edit screen)
+      if (next.status == AuthStatus.updated) {
+        setState(() {
+          _imageLoadFailed = false;
+        });
       }
     });
 
@@ -88,14 +98,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       backgroundColor: Colors.white,
                       child: CircleAvatar(
                         radius: 48,
-                        // We keep avatarBlue if there  is no image to show the letter clearly
-                        backgroundColor: imageProvider == null
-                            ? avatarBlue
+                        // Keep the blue background always ready in case image fails
+                        backgroundColor: (imageProvider == null || _imageLoadFailed)                            ? avatarBlue
                             : Colors.transparent,
-                        // If imageUrl exists and is valid, use NetworkImage, else null
-                          backgroundImage: imageProvider,
+
+                        // Load image from provider; falls back to initials if file is missing.
+                        backgroundImage: _imageLoadFailed ? null : imageProvider,
+
+                        onBackgroundImageError: (_imageLoadFailed || imageProvider == null)
+                            ? null
+                            : (exception, stackTrace) {
+                          if (!_imageLoadFailed) {
+                            // When the network fails to find the deleted image, this prevents a blank screen
+                            setState(() {
+                              _imageLoadFailed = true;
+                            });
+                          }
+                        },
+
                         // If no image, display the 1st letter of username
-                        child: imageProvider == null
+                        child: (imageProvider == null || _imageLoadFailed)
                             ? Text(
                           (user?.username != null && user!.username.trim().isNotEmpty)
                               ? user.username.trim()[0].toUpperCase()

@@ -23,6 +23,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final Color darkBlue = const Color(0xFF003049);
   final Color lightBg = const Color(0xFFF7F9FC);
 
+  bool _imageLoadFailed = false;
+
   String _selectedCountryCode = '+977'; // Default Nepal
   final List<Map<String, String>> _countryCodes = [
     {'code': '+977', 'name': 'Nepal', 'flag': '🇳🇵'},
@@ -107,6 +109,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     if (photo != null) {
       setState(() {
         _profileImage = File(photo.path);
+        _imageLoadFailed = false;
       });
     }
   }
@@ -121,6 +124,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     if (image != null) {
       setState(() {
         _profileImage = File(image.path);
+        _imageLoadFailed = false;
       });
     }
   }
@@ -195,6 +199,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (next.status == AuthStatus.updated) {
         SnackbarUtils.showSuccess(context, "Profile updated successfully!");
+        setState(() {
+          _profileImage = null;
+          _imageLoadFailed = false;
+        });
+
         ref.read(authViewModelProvider.notifier).clearError();
       } else if (next.status == AuthStatus.error && next.errorMessage != null) {
         SnackbarUtils.showError(context, next.errorMessage!);
@@ -213,7 +222,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       if (savedPath != null && savedPath.isNotEmpty) {
         // If the image is NOT on this phone, download it from our Node.js server
         if (savedPath.startsWith('/uploads')) {
-          return NetworkImage("http://10.0.2.2:5050$savedPath");
+          NetworkImage("http://10.0.2.2:5050$savedPath");
         }
         // If the image is saved on THIS phone (after we just picked it), load it from the phone's memory
         if (savedPath.startsWith('/') && !savedPath.startsWith('/uploads')) {
@@ -222,7 +231,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             return FileImage(localFile);
           }
         }
-        return NetworkImage("http://10.0.2.2:5050$savedPath");
+        NetworkImage("http://10.0.2.2:5050$savedPath");
       }
 
       return null;
@@ -260,10 +269,24 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     child: CircleAvatar(
                       radius: 60,
                       backgroundColor: const Color(0xFFE3F2FD),
-                      backgroundImage: getImageProvider(),
+
+                      // If load failed, don't even try to set the background image, set to null
+                      backgroundImage: _imageLoadFailed ? null : getImageProvider(),
+
+                      // It handles cases where the image file is missing on the server [If the image is null, this listener MUST also be null]
+                        onBackgroundImageError: (_imageLoadFailed || getImageProvider() == null)
+                            ? null
+                            : (exception, stackTrace) {
+                          // If it fails, set this to true to force the letter to show
+                          if (!_imageLoadFailed) {
+                            setState(() {
+                              _imageLoadFailed = true;
+                            });
+                          }
+                        },
 
                       // If no image, display the 1st letter of username
-                      child: getImageProvider() == null
+                      child: (getImageProvider() == null || _imageLoadFailed)
                           ? Text(
                         (user?.username != null && user!.username.trim().isNotEmpty)
                             ? user.username.trim()[0].toUpperCase()
