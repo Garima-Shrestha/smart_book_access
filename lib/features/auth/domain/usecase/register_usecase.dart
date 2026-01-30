@@ -7,12 +7,11 @@ import 'package:smart_book_access/features/auth/domain/entities/auth_entity.dart
 import 'package:smart_book_access/features/auth/domain/repositories/auth_repository.dart';
 import '../../../../core/error/failures.dart';
 
-
-final registerUsecaseProvider = Provider<RegisterUsecase>((ref){
+final registerUsecaseProvider = Provider<RegisterUsecase>((ref) {
   return RegisterUsecase(authRepository: ref.read(authRepositoryProvider));
 });
 
-class RegisterUsecaseParams extends Equatable{
+class RegisterUsecaseParams extends Equatable {
   final String username;
   final String email;
   final String countryCode;
@@ -25,29 +24,27 @@ class RegisterUsecaseParams extends Equatable{
     required this.countryCode,
     required this.phone,
     required this.password,
-});
+  });
   @override
   List<Object?> get props => [username, email, countryCode, phone, password];
 }
 
 class RegisterUsecase
-    implements UsecaseWithParams<bool, RegisterUsecaseParams>{
-
+    implements UsecaseWithParams<bool, RegisterUsecaseParams> {
   final IAuthRepository _authRepository;
 
   RegisterUsecase({required IAuthRepository authRepository})
-      : _authRepository = authRepository;
+    : _authRepository = authRepository;
 
   @override
   Future<Either<Failure, bool>> call(RegisterUsecaseParams params) {
     final entity = AuthEntity(
-        username: params.username,
-        email: params.email,
-        countryCode: params.countryCode,
-        phone: params.phone,
-        password: params.password,
+      username: params.username,
+      email: params.email,
+      countryCode: params.countryCode,
+      phone: params.phone,
+      password: params.password,
     );
     return _authRepository.register(entity);
   }
 }
-
