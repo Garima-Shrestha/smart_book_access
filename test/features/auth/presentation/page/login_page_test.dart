@@ -76,7 +76,7 @@ void main() {
       await tester.tap(loginButton);
       await tester.pump();
 
-      // Verify specific
+      // Verify
       expect(find.text('Email is required'), findsOneWidget);
       expect(find.text('Password is required'), findsOneWidget);
     });
