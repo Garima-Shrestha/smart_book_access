@@ -10,7 +10,7 @@ import 'package:smart_book_access/features/auth/domain/usecase/login_usecase.dar
 class MockAuthRepository extends Mock implements IAuthRepository {}
 
 class MockFailure extends Failure {
-  const MockFailure(String message) : super(message);
+  const MockFailure(super.message);
 }
 
 void main() {

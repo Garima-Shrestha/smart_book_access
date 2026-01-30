@@ -26,7 +26,7 @@ class MockUpdateProfileUsecase extends Mock implements UpdateProfileUsecase {}
 class MockUserSessionService extends Mock implements UserSessionService {}
 
 class MockFailure extends Failure {
-  const MockFailure(String message) : super(message);
+  const MockFailure(super.message);
 }
 
 void main() {
