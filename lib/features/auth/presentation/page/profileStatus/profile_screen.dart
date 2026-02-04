@@ -8,6 +8,7 @@ import 'package:smart_book_access/features/auth/presentation/page/profileStatus/
 import 'package:smart_book_access/features/auth/presentation/page/profileStatus/edit_profile_screen.dart';
 import 'package:smart_book_access/features/auth/presentation/state/auth_state.dart';
 import 'package:smart_book_access/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:smart_book_access/features/privacyPolicy/presentation/page/privacy_policy_page.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -178,7 +179,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     icon: Icons.description_outlined,
                     iconColor: Colors.lightBlue.shade300,
                     title: "Privacy Policy",
-                    onTap: () {},
+                    onTap: () => AppRoutes.push(context, const PrivacyPolicyPage()),
                   ),
                   _buildMenuRow(
                     icon: Icons.logout_rounded,
