@@ -13,6 +13,7 @@ abstract interface class IAuthLocalDataSource {
   Future<bool> isEmailExists(String email);
 
   Future<bool> updateProfile(AuthHiveModel model);
+  Future<bool> updatePassword(String newPassword);
 }
 
 abstract interface class IAuthRemoteDataSource {
@@ -21,4 +22,5 @@ abstract interface class IAuthRemoteDataSource {
   Future<AuthApiModel?> getUserById(String authId);
 
   Future<bool> updateProfile(AuthApiModel user, File? imageUrl);
+  Future<bool> changePassword(String oldPassword, String newPassword);
 }

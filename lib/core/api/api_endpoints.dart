@@ -38,4 +38,5 @@ class ApiEndpoints {
 
   // Update Profile
   static const String updateProfile = '/api/auth/update-profile';
+  static const String changePassword = '/api/auth/change-password';
 }

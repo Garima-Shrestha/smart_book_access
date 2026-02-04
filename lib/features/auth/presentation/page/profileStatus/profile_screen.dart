@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/app/routes/app_routes.dart';
 import 'package:smart_book_access/features/auth/presentation/page/login_page.dart';
+import 'package:smart_book_access/features/auth/presentation/page/profileStatus/account_details_screen.dart';
 import 'package:smart_book_access/features/auth/presentation/page/profileStatus/edit_profile_screen.dart';
 import 'package:smart_book_access/features/auth/presentation/state/auth_state.dart';
 import 'package:smart_book_access/features/auth/presentation/view_model/auth_view_model.dart';
@@ -171,7 +172,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     iconColor: primaryBlue,
                     title: "Account details",
                     subtitle: "Manage your account",
-                    onTap: () {},
+                    onTap: () => AppRoutes.push(context, const AccountDetailsScreen()),
                   ),
                   _buildMenuRow(
                     icon: Icons.description_outlined,

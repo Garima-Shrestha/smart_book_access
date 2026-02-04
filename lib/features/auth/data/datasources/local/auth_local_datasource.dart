@@ -102,4 +102,34 @@ class AuthLocalDatasource implements IAuthLocalDataSource{
       return false;
     }
   }
+
+  @override
+  Future<bool> updatePassword(String newPassword) async {
+    try {
+      // Get the current user ID from session
+      final userId = _userSessionService.getCurrentUserId();
+      if (userId == null) return false;
+
+      // Fetch the current user model from Hive
+      final currentModel = _hiveService.getCurrentUser(userId);
+      if (currentModel == null) return false;
+
+      // Create a updated model with the new password
+      final updatedModel = AuthHiveModel(
+        authId: currentModel.authId,
+        username: currentModel.username,
+        email: currentModel.email,
+        countryCode: currentModel.countryCode,
+        phone: currentModel.phone,
+        imageUrl: currentModel.imageUrl,
+        password: newPassword, // Update the password field
+      );
+
+      // Save back to Hive
+      await _hiveService.updateUser(updatedModel);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

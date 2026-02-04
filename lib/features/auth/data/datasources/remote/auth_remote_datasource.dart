@@ -142,4 +142,28 @@ class AuthRemoteDatasource implements IAuthRemoteDataSource {
       }
       return false;
   }
+
+  @override
+  Future<bool> changePassword(String oldPassword, String newPassword) async {
+    final token = await _tokenService.getToken();
+
+    final response = await _apiClient.put(
+      ApiEndpoints.changePassword,
+      data: {
+        'oldPassword': oldPassword,
+        'password': newPassword,
+      },
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data['success'] == true) {
+      return true;
+    }
+    return false;
+  }
+
 }

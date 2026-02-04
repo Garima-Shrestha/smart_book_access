@@ -263,6 +263,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
+        toolbarHeight: 70,
         title: const Text(
           "Edit Profile",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 22),
