@@ -31,7 +31,7 @@ class PrivacyPolicyPage extends StatelessWidget {
         padding: const EdgeInsets.all(24.0),
         children: [
           const Text(
-            "Smart Book access values your privacy. This policy explains how we collect, use, and protect your data when you use our book rental app.",
+            "Novella values your privacy. This policy explains how we collect, use, and protect your data when you use our book rental app.",
             style: TextStyle(fontSize: 15, height: 1.5, color: Colors.black87),
           ),
           const SizedBox(height: 24),
