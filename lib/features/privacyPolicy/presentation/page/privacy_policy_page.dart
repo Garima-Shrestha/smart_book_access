@@ -142,7 +142,7 @@ class PrivacyPolicyPage extends StatelessWidget {
             children: [
               const Text("📧 ", style: TextStyle(fontSize: 18)),
               Text(
-                "bookrental@gmail.com",
+                "novella@gmail.com",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
