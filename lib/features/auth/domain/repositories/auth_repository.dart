@@ -12,4 +12,7 @@ abstract interface class IAuthRepository {
 
   Future<Either<Failure, bool>> updateProfile(AuthEntity entity, {File? imageUrl});
   Future<Either<Failure, bool>> changePassword(String oldPassword, String newPassword);
+
+  Future<Either<Failure, bool>> forgotPassword(String email);
+  Future<Either<Failure, bool>> resetPassword(String token, String password);
 }

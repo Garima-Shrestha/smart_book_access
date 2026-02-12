@@ -7,8 +7,9 @@ class ApiEndpoints {
 
   // Configuration
   static const bool isPhysicalDevice = false;
-  static const String _ipAddress = '192.168.1.1';
-  static const int _port = 5050;
+  static const String _ipAddress = '192.168.0.103';
+  static const int _backendPort = 5050;
+  static const int _webPort = 3000;
 
   // Base URLs
   static String get _host {
@@ -18,9 +19,10 @@ class ApiEndpoints {
     return 'localhost';
   }
 
-  static String get serverUrl => 'http://$_host:$_port';
+  static String get serverUrl => 'http://$_host:$_backendPort';
   static String get baseUrl => '$serverUrl';
   static String get mediaServerUrl => serverUrl;
+  static String get webBaseUrl => 'http://$_ipAddress:$_webPort';
 
   // // Base URL
   // // static const String baseUrl = 'http://10.0.2.2:3000/api/v1';
@@ -39,4 +41,8 @@ class ApiEndpoints {
   // Update Profile
   static const String updateProfile = '/api/auth/update-profile';
   static const String changePassword = '/api/auth/change-password';
+
+  // Forgot Password and Reset Password
+  static const String forgotPassword = '/api/auth/request-password-reset';
+  static String resetPassword(String token) => '/api/auth/reset-password/$token';
 }

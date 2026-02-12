@@ -191,4 +191,46 @@ class AuthRepository implements IAuthRepository {
       return const Left(ApiFailure(message: "No internet connection to change password"));
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> forgotPassword(String email) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final result = await _authRemoteDataSource.forgotPassword(email);
+        return Right(result);
+      } on DioException catch (e) {
+        return Left(
+          ApiFailure(
+            message: e.response?.data['message'] ?? 'Failed to send reset link',
+            statusCode: e.response?.statusCode,
+          ),
+        );
+      } catch (e) {
+        return Left(ApiFailure(message: e.toString()));
+      }
+    } else {
+      return const Left(ApiFailure(message: "No internet connection"));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> resetPassword(String token, String password) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final result = await _authRemoteDataSource.resetPassword(token, password);
+        return Right(result);
+      } on DioException catch (e) {
+        return Left(
+          ApiFailure(
+            message: e.response?.data['message'] ?? 'Failed to reset password',
+            statusCode: e.response?.statusCode,
+          ),
+        );
+      } catch (e) {
+        return Left(ApiFailure(message: e.toString()));
+      }
+    } else {
+      return const Left(ApiFailure(message: "No internet connection"));
+    }
+  }
 }

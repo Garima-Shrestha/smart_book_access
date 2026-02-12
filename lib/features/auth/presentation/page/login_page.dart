@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/app/routes/app_routes.dart';
 import 'package:smart_book_access/core/utils/snackbar_utils.dart';
+import 'package:smart_book_access/features/auth/presentation/page/forgot_password_page.dart';
 import 'package:smart_book_access/features/auth/presentation/page/signup_page.dart';
 import 'package:smart_book_access/features/auth/presentation/state/auth_state.dart';
 import 'package:smart_book_access/features/auth/presentation/view_model/auth_view_model.dart';
@@ -43,11 +44,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   void _navigateToSignup() {
     AppRoutes.push(context, const SignupPage());
   }
-
-  // void _handleForgotPassword() {
-  //   // TODO: Implement forgot password
-  //   SnackbarUtils.showInfo(context, 'Forgot password feature coming soon');
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -152,8 +148,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        // onPressed: _handleForgotPassword,
-                        onPressed: (){},
+                        onPressed: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
+                          );
+                        },
                         child: Text(
                           'Forgot Password?',
                           style: TextStyle(

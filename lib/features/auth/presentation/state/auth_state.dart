@@ -1,7 +1,18 @@
 import 'package:equatable/equatable.dart';
 import 'package:smart_book_access/features/auth/domain/entities/auth_entity.dart';
 
-enum AuthStatus { initial, loading, authenticated, unauthenticated, updated, registered, error, passwordChanged }
+enum AuthStatus {
+  initial,
+  loading,
+  authenticated,
+  unauthenticated,
+  updated,
+  registered,
+  error,
+  passwordChanged,
+  resetLinkSent,
+  passwordReset
+}
 
 class AuthState extends Equatable {
   final AuthStatus status;

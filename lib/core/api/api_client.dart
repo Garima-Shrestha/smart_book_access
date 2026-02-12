@@ -165,11 +165,17 @@ class _AuthInterceptor extends Interceptor {
     final publicEndpoints = [
       ApiEndpoints.register,
       ApiEndpoints.login,
+      ApiEndpoints.forgotPassword,
     ];
 
-    final isPublic = publicEndpoints.any(
+    // final isPublic = publicEndpoints.any(
+    //       (endpoint) => options.path.startsWith(endpoint),
+    // );
+
+    final bool isPublic = publicEndpoints.any(
           (endpoint) => options.path.startsWith(endpoint),
-    );
+    ) ||
+        options.path.contains('/api/auth/reset-password/');
 
     if (!isPublic) {
       final token = await _storage.read(key: _tokenKey);
