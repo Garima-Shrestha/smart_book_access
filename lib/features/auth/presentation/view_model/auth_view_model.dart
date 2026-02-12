@@ -217,11 +217,15 @@ class AuthViewModel extends Notifier<AuthState>{
         status: AuthStatus.error,
         errorMessage: failure.message,
       ),
-          (success) {
-        state = state.copyWith(
-          status: AuthStatus.passwordChanged,
-          errorMessage: null,
-        );
+          (success) async {
+            final sessionService = ref.read(userSessionServiceProvider);
+            await sessionService.clearUserSession();
+
+          state = state.copyWith(
+            status: AuthStatus.passwordChanged,
+            authEntity: null, // Clear user data from state memory
+            errorMessage: null,
+          );
       },
     );
   }

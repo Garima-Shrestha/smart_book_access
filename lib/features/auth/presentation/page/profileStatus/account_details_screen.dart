@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_book_access/features/auth/presentation/page/login_page.dart';
 import 'package:smart_book_access/features/auth/presentation/state/auth_state.dart';
 import 'package:smart_book_access/features/auth/presentation/view_model/auth_view_model.dart';
 import '../../../../../core/utils/snackbar_utils.dart';
@@ -53,9 +54,21 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (next.status == AuthStatus.passwordChanged) {
         SnackbarUtils.showSuccess(context, "Password changed successfully!");
+
         _oldPasswordController.clear();
         _newPasswordController.clear();
         _confirmPasswordController.clear();
+
+        Future.delayed(const Duration(seconds: 1), () {
+          if (!mounted) return;
+
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()), // Use your actual Login class name here
+                (route) => false,
+          );
+        });
+
       } else if (next.status == AuthStatus.error) {
         SnackbarUtils.showError(context, next.errorMessage ?? "Failed to change password");
       }
