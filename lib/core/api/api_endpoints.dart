@@ -45,4 +45,8 @@ class ApiEndpoints {
   // Forgot Password and Reset Password
   static const String forgotPassword = '/api/auth/request-password-reset';
   static String resetPassword(String token) => '/api/auth/reset-password/$token';
+
+  // Category
+  static const String getAllCategories = '/api/categories/';
+  static String getCategoryById(String id) => '/api/categories/$id';
 }

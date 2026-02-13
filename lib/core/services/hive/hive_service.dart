@@ -3,6 +3,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/core/constants/hive_table_constant.dart';
 import 'package:smart_book_access/features/auth/data/models/auth_hive_model.dart';
+import 'package:smart_book_access/features/category/data/models/category_hive_model.dart';
 
 
 final hiveServiceProvider = Provider<HiveService>((ref) {
@@ -25,11 +26,16 @@ class HiveService {
     if(!Hive.isAdapterRegistered(HiveTableConstant.authTypeId)){
       Hive.registerAdapter(AuthHiveModelAdapter());
     }
+
+    if (!Hive.isAdapterRegistered(HiveTableConstant.categoryTypeId)) {
+      Hive.registerAdapter(CategoryHiveModelAdapter());
+    }
   }
 
   // Open Boxes
   Future<void> openBoxes() async {
     await Hive.openBox<AuthHiveModel>(HiveTableConstant.authTable);
+    await Hive.openBox<CategoryHiveModel>(HiveTableConstant.categoryTable);
   }
 
   // Close Boxes
@@ -77,6 +83,22 @@ class HiveService {
   Future<void> updateUser(AuthHiveModel model) async {
     await _authBox.put(model.authId, model);
   }
+
+
+  // -------------------Category Queries-----------------
+  Box<CategoryHiveModel> get _categoryBox =>
+      Hive.box<CategoryHiveModel>(HiveTableConstant.categoryTable);
+
+  Future<void> addAllCategories(List<CategoryHiveModel> models) async {
+    for (var model in models) {
+      await _categoryBox.put(model.categoryId, model);
+    }
+  }
+
+  List<CategoryHiveModel> getAllCategories() {
+    return _categoryBox.values.toList();
+  }
+
 
   //-------------Splash Page---------------
   // Future<bool> isUserLoggedIn() async {
