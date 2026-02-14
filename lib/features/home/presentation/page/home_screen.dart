@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/features/category/presentation/page/category_page.dart';
+import 'package:smart_book_access/features/category/presentation/view_model/category_view_model.dart';
 
 
 // Lists of Categories
@@ -17,6 +18,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    final categoryState = ref.watch(categoryViewModelProvider);
+
     return SizedBox(
       child: SingleChildScrollView(
         child: Column(
@@ -92,10 +95,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   height: 40,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: categories.length,
+                    itemCount: categoryState.categories.length,
                     itemBuilder: (context, index) {
-                      final category = categories[index];
-                      return Container(
+                      final category = categoryState.categories[index];
+                      return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CategoryPage(scrollToIndex: index),
+                              ),
+                            );
+                          },
+                      child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         margin: const EdgeInsets.only(left: 10),
                         decoration: BoxDecoration(
@@ -104,9 +116,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                         alignment: Alignment.center,     // keeping text in center for each box
                         child: Text(
-                          category,
+                          category.categoryName,
                           style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
                         ),
+                      ),
                       );
                     },
                   )

@@ -9,16 +9,35 @@ import 'package:smart_book_access/features/category/presentation/state/category_
 import 'package:smart_book_access/features/category/presentation/view_model/category_view_model.dart';
 
 class CategoryPage extends ConsumerStatefulWidget {
-  const CategoryPage({super.key});
+  final int? scrollToIndex;
+  const CategoryPage({super.key, this.scrollToIndex});
 
   @override
   ConsumerState<CategoryPage> createState() => _CategoryPageState();
 }
 
 class _CategoryPageState extends ConsumerState<CategoryPage> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    if (widget.scrollToIndex != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _performScroll();
+      });
+    }
+  }
+
+  void _performScroll() {
+    if (_scrollController.hasClients) {
+      double offset = widget.scrollToIndex! * 320.0;
+      _scrollController.animateTo(
+        offset,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
@@ -80,6 +99,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
     }
 
     return ListView.builder(
+      controller: _scrollController,
       padding: const EdgeInsets.only(bottom: 20),
       itemCount: state.categories.length,
       itemBuilder: (context, index) {
