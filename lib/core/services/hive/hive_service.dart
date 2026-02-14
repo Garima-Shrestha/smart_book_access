@@ -3,6 +3,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/core/constants/hive_table_constant.dart';
 import 'package:smart_book_access/features/auth/data/models/auth_hive_model.dart';
+import 'package:smart_book_access/features/book/data/models/book_hive_model.dart';
 import 'package:smart_book_access/features/category/data/models/category_hive_model.dart';
 
 
@@ -30,12 +31,17 @@ class HiveService {
     if (!Hive.isAdapterRegistered(HiveTableConstant.categoryTypeId)) {
       Hive.registerAdapter(CategoryHiveModelAdapter());
     }
+
+    if (!Hive.isAdapterRegistered(HiveTableConstant.bookTypeId)) {
+      Hive.registerAdapter(BookHiveModelAdapter());
+    }
   }
 
   // Open Boxes
   Future<void> openBoxes() async {
     await Hive.openBox<AuthHiveModel>(HiveTableConstant.authTable);
     await Hive.openBox<CategoryHiveModel>(HiveTableConstant.categoryTable);
+    await Hive.openBox<BookHiveModel>(HiveTableConstant.bookTable);
   }
 
   // Close Boxes
@@ -97,6 +103,33 @@ class HiveService {
 
   List<CategoryHiveModel> getAllCategories() {
     return _categoryBox.values.toList();
+  }
+
+
+  // -------------------Book Queries-----------------
+  Box<BookHiveModel> get _bookBox =>
+      Hive.box<BookHiveModel>(HiveTableConstant.bookTable);
+
+  // Add all books to cache
+  Future<void> addAllBooks(List<BookHiveModel> models) async {
+    for (var model in models) {
+      await _bookBox.put(model.bookId, model);
+    }
+  }
+
+  // Get all cached books
+  List<BookHiveModel> getAllBooks() {
+    return _bookBox.values.toList();
+  }
+
+  // Get a single book by ID
+  BookHiveModel? getBookById(String bookId) {
+    return _bookBox.get(bookId);
+  }
+
+  // Delete all cached books
+  Future<void> clearBookBox() async {
+    await _bookBox.clear();
   }
 
 

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_book_access/core/api/api_endpoints.dart';
 import 'package:smart_book_access/core/utils/snackbar_utils.dart';
+import 'package:smart_book_access/features/book/presentation/state/book_state.dart';
+import 'package:smart_book_access/features/book/presentation/view_model/book_view_model.dart';
 import 'package:smart_book_access/features/category/presentation/state/category_state.dart';
 import 'package:smart_book_access/features/category/presentation/view_model/category_view_model.dart';
 
@@ -13,11 +16,23 @@ class CategoryPage extends ConsumerStatefulWidget {
 
 class _CategoryPageState extends ConsumerState<CategoryPage> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final categoryState = ref.watch(categoryViewModelProvider);
+    final bookState = ref.watch(bookViewModelProvider);
 
     ref.listen<CategoryState>(categoryViewModelProvider, (previous, next) {
       if (next.status == CategoryStatus.error && next.errorMessage != null) {
+        SnackbarUtils.showError(context, next.errorMessage!);
+      }
+    });
+
+    ref.listen(bookViewModelProvider, (previous, next) {
+      if (next.status == BookStatus.error && next.errorMessage != null) {
         SnackbarUtils.showError(context, next.errorMessage!);
       }
     });
@@ -41,11 +56,11 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
         ),
         centerTitle: true,
       ),
-      body: _buildBody(categoryState),
+      body: _buildBody(categoryState, bookState),
     );
   }
 
-  Widget _buildBody(CategoryState state) {
+  Widget _buildBody(CategoryState state, BookState bookState) {
     if (state.status == CategoryStatus.loading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -69,7 +84,11 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
       itemBuilder: (context, index) {
         final category = state.categories[index];
 
-        // To make:- "fiction" -> "Fiction"
+        // ✅ FIX: BookEntity.genre is categoryId string
+        final categoryBooks = bookState.books.where((book) {
+          return book.genre == category.categoryId;
+        }).toList();
+
         final String displayName = category.categoryName.isNotEmpty
             ? category.categoryName[0].toUpperCase() +
             category.categoryName.substring(1).toLowerCase()
@@ -78,7 +97,6 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Category Title
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
               child: Text(
@@ -91,48 +109,75 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
               ),
             ),
 
-            // Horizontal Book List Area
             SizedBox(
               height: 260,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.only(left: 20),
-                itemCount: 1,
+                itemCount: categoryBooks.isEmpty ? 1 : categoryBooks.length,
                 itemBuilder: (context, bookIndex) {
+                  if (categoryBooks.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 190,
+                            width: 140,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEEEEEE),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "No books yet",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF444444),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          const SizedBox(width: 140),
+                        ],
+                      ),
+                    );
+                  }
+
+                  final book = categoryBooks[bookIndex];
+
                   return Padding(
                     padding: const EdgeInsets.only(right: 15),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Book Image Placeholder
                         Container(
                           height: 190,
                           width: 140,
                           decoration: BoxDecoration(
                             color: const Color(0xFFEEEEEE),
                             borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "No books yet",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF444444),
+                            image: DecorationImage(
+                              // ✅ FIX: avoid double slash
+                              image: NetworkImage(
+                                '${ApiEndpoints.serverUrl}${book.coverImageUrl}',
                               ),
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
                         const SizedBox(height: 10),
-                        // title
-                        const SizedBox(
+                        SizedBox(
                           width: 140,
                           child: Text(
-                            "",
+                            book.title,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF444444),

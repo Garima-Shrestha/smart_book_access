@@ -14,6 +14,6 @@ CategoryApiModel _$CategoryApiModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$CategoryApiModelToJson(CategoryApiModel instance) =>
     <String, dynamic>{
-      '_id': instance.id,
+      // '_id': instance.id,
       'name': instance.name,
     };

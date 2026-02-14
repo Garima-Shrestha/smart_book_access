@@ -49,4 +49,8 @@ class ApiEndpoints {
   // Category
   static const String getAllCategories = '/api/categories/';
   static String getCategoryById(String id) => '/api/categories/$id';
+
+  // Book
+  static const String getAllBooks = '/api/books';
+  static String getBookById(String id) => '/api/books/$id';
 }
