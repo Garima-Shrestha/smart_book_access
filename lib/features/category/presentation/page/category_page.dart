@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/core/api/api_endpoints.dart';
 import 'package:smart_book_access/core/utils/snackbar_utils.dart';
+import 'package:smart_book_access/features/book/presentation/page/book_detail_page.dart';
 import 'package:smart_book_access/features/book/presentation/state/book_state.dart';
 import 'package:smart_book_access/features/book/presentation/view_model/book_view_model.dart';
 import 'package:smart_book_access/features/category/presentation/state/category_state.dart';
@@ -84,7 +85,6 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
       itemBuilder: (context, index) {
         final category = state.categories[index];
 
-        // ✅ FIX: BookEntity.genre is categoryId string
         final categoryBooks = bookState.books.where((book) {
           return book.genre == category.categoryId;
         }).toList();
@@ -152,6 +152,15 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
 
                   return Padding(
                     padding: const EdgeInsets.only(right: 15),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BookDetailsPage(book: book),
+                            ),
+                          );
+                        },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -162,7 +171,6 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
                             color: const Color(0xFFEEEEEE),
                             borderRadius: BorderRadius.circular(15),
                             image: DecorationImage(
-                              // ✅ FIX: avoid double slash
                               image: NetworkImage(
                                 '${ApiEndpoints.serverUrl}${book.coverImageUrl}',
                               ),
@@ -186,6 +194,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
                         ),
                       ],
                     ),
+                      ),
                   );
                 },
               ),
