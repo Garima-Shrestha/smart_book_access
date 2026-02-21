@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/core/constants/hive_table_constant.dart';
 import 'package:smart_book_access/features/auth/data/models/auth_hive_model.dart';
 import 'package:smart_book_access/features/book/data/models/book_hive_model.dart';
+import 'package:smart_book_access/features/bookAccess/data/models/book_access_hive_model.dart';
 import 'package:smart_book_access/features/category/data/models/category_hive_model.dart';
 
 
@@ -35,6 +36,22 @@ class HiveService {
     if (!Hive.isAdapterRegistered(HiveTableConstant.bookTypeId)) {
       Hive.registerAdapter(BookHiveModelAdapter());
     }
+
+    if (!Hive.isAdapterRegistered(HiveTableConstant.bookAccessTypeId)) {
+      Hive.registerAdapter(BookAccessHiveModelAdapter());
+    }
+    if (!Hive.isAdapterRegistered(HiveTableConstant.bookmarkTypeId)) {
+      Hive.registerAdapter(BookmarkHiveModelAdapter());
+    }
+    if (!Hive.isAdapterRegistered(HiveTableConstant.quoteTypeId)) {
+      Hive.registerAdapter(QuoteHiveModelAdapter());
+    }
+    if (!Hive.isAdapterRegistered(HiveTableConstant.selectionTypeId)) {
+      Hive.registerAdapter(SelectionHiveModelAdapter());
+    }
+    if (!Hive.isAdapterRegistered(HiveTableConstant.lastPositionTypeId)) {
+      Hive.registerAdapter(LastPositionHiveModelAdapter());
+    }
   }
 
   // Open Boxes
@@ -42,6 +59,7 @@ class HiveService {
     await Hive.openBox<AuthHiveModel>(HiveTableConstant.authTable);
     await Hive.openBox<CategoryHiveModel>(HiveTableConstant.categoryTable);
     await Hive.openBox<BookHiveModel>(HiveTableConstant.bookTable);
+    await Hive.openBox<BookAccessHiveModel>(HiveTableConstant.bookAccessTable);
   }
 
   // Close Boxes
@@ -130,6 +148,23 @@ class HiveService {
   // Delete all cached books
   Future<void> clearBookBox() async {
     await _bookBox.clear();
+  }
+
+
+  // -------------------Book Access Queries-----------------
+  Box<BookAccessHiveModel> get _bookAccessBox =>
+      Hive.box<BookAccessHiveModel>(HiveTableConstant.bookAccessTable);
+
+  Future<void> saveBookAccess(BookAccessHiveModel model) async {
+    await _bookAccessBox.put(model.bookId, model);
+  }
+
+  BookAccessHiveModel? getBookAccess(String bookId) {
+    return _bookAccessBox.get(bookId);
+  }
+
+  Future<void> clearBookAccessBox() async {
+    await _bookAccessBox.clear();
   }
 
 

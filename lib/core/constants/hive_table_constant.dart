@@ -20,4 +20,13 @@ class HiveTableConstant {
   // Rental History
   static const int rentalTypeId = 3;
   static const String rentalTable = 'rental_table';
+
+  // Book Access
+  static const int bookAccessTypeId = 4;
+  static const String bookAccessTable = 'book_access_table';
+
+  static const int bookmarkTypeId = 5;
+  static const int quoteTypeId = 6;
+  static const int selectionTypeId = 7;
+  static const int lastPositionTypeId = 8;
 }

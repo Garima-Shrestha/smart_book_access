@@ -56,4 +56,18 @@ class ApiEndpoints {
 
   // Book Access / Confirm Payment
   static String rentBook(String bookId) => '/api/book-access/rent/$bookId';
+
+  static const String getUserRentedBooks = '/api/book-access/';
+  static String getBookAccess(String bookId) => '/api/book-access/$bookId';
+
+  // Bookmarks
+  static String addBookmark(String bookId) => '/api/book-access/$bookId/bookmarks';
+  static String removeBookmark(String bookId) => '/api/book-access/$bookId/bookmarks';
+
+  // Quotes
+  static String addQuote(String bookId) => '/api/book-access/$bookId/quotes';
+  static String removeQuote(String bookId) => '/api/book-access/$bookId/quotes';
+
+  // Last Read Position
+  static String updateLastPosition(String bookId) => '/api/book-access/$bookId/last-position';
 }

@@ -146,6 +146,8 @@ dependencies:
   flutter_cache_manager: ^3.3.1
   video_thumbnail: ^0.5.3
   flutter_svg: ^2.0.10+1
+  syncfusion_flutter_pdfviewer: ^28.2.3
+  syncfusion_flutter_pdf: ^28.2.3
 
   # Real-time Features
   web_socket_channel: ^3.0.3
