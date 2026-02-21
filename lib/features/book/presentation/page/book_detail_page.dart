@@ -4,6 +4,7 @@ import 'package:smart_book_access/core/api/api_endpoints.dart';
 import 'package:smart_book_access/core/widgets/my_button.dart';
 import 'package:smart_book_access/features/book/domain/entities/book_entity.dart';
 import 'package:smart_book_access/features/category/presentation/view_model/category_view_model.dart';
+import 'package:smart_book_access/features/confirmPayment/presentation/page/confirm_payment_page.dart';
 
 class BookDetailsPage extends ConsumerWidget {
   final BookEntity book;
@@ -140,7 +141,12 @@ class BookDetailsPage extends ConsumerWidget {
                         text: "Rent Now",
                         color: const Color(0xFF9F0000),
                         onPressed: () {
-                          // Logic for renting using ref.read() goes here
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ConfirmPaymentPage(book: book),
+                            ),
+                          );
                         },
                         // isLoading can be passed here from a RentViewModel state later
                       ),

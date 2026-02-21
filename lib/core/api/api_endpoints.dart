@@ -53,4 +53,7 @@ class ApiEndpoints {
   // Book
   static const String getAllBooks = '/api/books';
   static String getBookById(String id) => '/api/books/$id';
+
+  // Book Access / Confirm Payment
+  static String rentBook(String bookId) => '/api/book-access/rent/$bookId';
 }
