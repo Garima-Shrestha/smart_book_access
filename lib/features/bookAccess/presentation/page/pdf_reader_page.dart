@@ -44,6 +44,9 @@ class _PdfReaderPageState extends ConsumerState<PdfReaderPage> {
   bool _accessAllowed = false;
   bool _restoredOnce = false;
   bool _sheetOpen = false;
+  bool _savingEnabled = false;
+  bool _docLoadedOnce = false;
+  bool _restoringNow = false;
 
   @override
   void initState() {
@@ -131,7 +134,11 @@ class _PdfReaderPageState extends ConsumerState<PdfReaderPage> {
     }
   }
 
-  void _saveLastPosition(int page, double offset, double zoom) {
+  void _saveLastPosition(int page, double offset, double zoomLevel) {
+    if (!_savingEnabled) return;
+    if (!_docLoadedOnce && page == 1 && offset <= 2) return;
+    final zoomPct = (zoomLevel * 100.0);
+
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 800), () {
       ref.read(bookAccessViewModelProvider.notifier).updatePosition(
@@ -139,7 +146,7 @@ class _PdfReaderPageState extends ConsumerState<PdfReaderPage> {
         position: LastPositionEntity(
           page: page,
           offsetY: offset,
-          zoom: zoom,
+          zoom: zoomPct,
         ),
       );
     });
@@ -147,18 +154,44 @@ class _PdfReaderPageState extends ConsumerState<PdfReaderPage> {
 
   void _restoreLastPositionOnce(BookAccessEntity access) {
     if (_restoredOnce) return;
-    _restoredOnce = true;
 
     final pos = access.lastPosition;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (pos == null) {
+      _restoredOnce = true;
+      _savingEnabled = true;
+      return;
+    }
+
+    _restoredOnce = true;
+    _savingEnabled = false;
+    _restoringNow = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
-        _controller.zoomLevel = 1.0;
+        _docLoadedOnce = true;
+        double zoomPct = (pos.zoom ?? 100.0);
+        if (zoomPct > 0 && zoomPct <= 3.0) {
+          zoomPct = zoomPct * 100.0;
+        }
+        final zoomLevel = (zoomPct / 100.0).clamp(0.7, 1.6);
+        _controller.zoomLevel = zoomLevel;
+        if (pos.page >= 1) {
+          _controller.jumpToPage(pos.page);
+        }
 
-        if (pos == null) return;
+        await Future.delayed(const Duration(milliseconds: 250));
+        if (pos.page >= 1) {
+          _controller.jumpToPage(pos.page);
+        }
 
-        _controller.jumpToPage(pos.page);
-        _controller.jumpTo(yOffset: pos.offsetY);
-      } catch (_) {}
+        await Future.delayed(const Duration(milliseconds: 700));
+      } catch (_) {
+        // ignore
+      } finally {
+        if (!mounted) return;
+        _restoringNow = false;
+        _savingEnabled = true;
+      }
     });
   }
 
@@ -382,6 +415,7 @@ class _PdfReaderPageState extends ConsumerState<PdfReaderPage> {
         },
 
         onPageChanged: (details) {
+          if (_restoringNow) return;
           _saveLastPosition(
             details.newPageNumber,
             _controller.scrollOffset.dy,
