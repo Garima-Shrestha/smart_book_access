@@ -8,6 +8,7 @@ import 'package:smart_book_access/features/auth/presentation/page/profileStatus/
 import 'package:smart_book_access/features/auth/presentation/page/profileStatus/edit_profile_screen.dart';
 import 'package:smart_book_access/features/auth/presentation/state/auth_state.dart';
 import 'package:smart_book_access/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:smart_book_access/features/bookAccess/presentation/page/my_quote_page.dart';
 import 'package:smart_book_access/features/privacyPolicy/presentation/page/privacy_policy_page.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -174,6 +175,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     title: "Account details",
                     subtitle: "Manage your account",
                     onTap: () => AppRoutes.push(context, const AccountDetailsScreen()),
+                  ),
+                  _buildMenuRow(
+                    icon: Icons.format_quote_outlined,
+                    iconColor: primaryBlue,
+                    title: "My Quotes",
+                    subtitle: "View saved quotes",
+                    onTap: () => AppRoutes.push(context, const MyQuotesPage()),
                   ),
                   _buildMenuRow(
                     icon: Icons.description_outlined,
