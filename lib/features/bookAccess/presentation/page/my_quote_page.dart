@@ -374,8 +374,12 @@ class _MyQuotesPageState extends ConsumerState<MyQuotesPage> {
     SnackbarUtils.showSuccess(context, "Copied");
   }
 
-  void _openBookIfAllowed(_FlattenedQuote first) {
-    if (first.isExpired) {
+  void _openBookIfAllowed({
+    required String bookId,
+    required String title,
+    required bool expired,
+  }) {
+    if (expired) {
       SnackbarUtils.showError(context, "Rent expired. You can still view quotes here.");
       return;
     }
@@ -384,8 +388,8 @@ class _MyQuotesPageState extends ConsumerState<MyQuotesPage> {
       context,
       MaterialPageRoute(
         builder: (_) => PdfReaderPage(
-          bookId: first.bookId,
-          title: first.bookTitle,
+          bookId: bookId,
+          title: title,
         ),
       ),
     );
@@ -517,13 +521,14 @@ class _MyQuotesPageState extends ConsumerState<MyQuotesPage> {
             final items = entry.value;
             final first = items.first;
 
-            final expired = items.any((x) => x.isExpired);
+            final hasActiveNow = items.any((x) => !x.isExpired);
+            final expired = !hasActiveNow;
             final coverUrl = _buildFullMediaUrl(first.coverImageUrl);
 
             return Container(
               margin: const EdgeInsets.only(bottom: 14),
               decoration: BoxDecoration(
-                color: Colors.white, // ✅ no grey background
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: const Color(0xFFE6E6E6)),
                 boxShadow: [
@@ -606,7 +611,11 @@ class _MyQuotesPageState extends ConsumerState<MyQuotesPage> {
                         ),
                         if (!expired)
                           TextButton(
-                            onPressed: () => _openBookIfAllowed(first),
+                            onPressed: () => _openBookIfAllowed(
+                              bookId: first.bookId,
+                              title: first.bookTitle,
+                              expired: expired,
+                            ),
                             child: const Text(
                               "Open book",
                               style: TextStyle(
@@ -669,7 +678,7 @@ class _MyQuotesPageState extends ConsumerState<MyQuotesPage> {
                                           ),
                                         ),
                                         const SizedBox(width: 10),
-                                        _statusChip(item.isExpired),
+                                        _statusChip(expired),
                                       ],
                                     ),
                                     const SizedBox(height: 10),
