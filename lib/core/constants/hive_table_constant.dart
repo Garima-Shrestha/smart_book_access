@@ -29,4 +29,8 @@ class HiveTableConstant {
   static const int quoteTypeId = 6;
   static const int selectionTypeId = 7;
   static const int lastPositionTypeId = 8;
+
+  // My Library
+  static const int myLibraryTypeId = 9;
+  static const String myLibraryTable = 'my_library_table';
 }

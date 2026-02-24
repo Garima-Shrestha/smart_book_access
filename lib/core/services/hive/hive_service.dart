@@ -6,6 +6,7 @@ import 'package:smart_book_access/features/auth/data/models/auth_hive_model.dart
 import 'package:smart_book_access/features/book/data/models/book_hive_model.dart';
 import 'package:smart_book_access/features/bookAccess/data/models/book_access_hive_model.dart';
 import 'package:smart_book_access/features/category/data/models/category_hive_model.dart';
+import 'package:smart_book_access/features/library/data/models/my_library_hive_model.dart';
 
 
 final hiveServiceProvider = Provider<HiveService>((ref) {
@@ -52,6 +53,10 @@ class HiveService {
     if (!Hive.isAdapterRegistered(HiveTableConstant.lastPositionTypeId)) {
       Hive.registerAdapter(LastPositionHiveModelAdapter());
     }
+
+    if (!Hive.isAdapterRegistered(HiveTableConstant.myLibraryTypeId)) {
+      Hive.registerAdapter(MyLibraryHiveModelAdapter());
+    }
   }
 
   // Open Boxes
@@ -60,6 +65,7 @@ class HiveService {
     await Hive.openBox<CategoryHiveModel>(HiveTableConstant.categoryTable);
     await Hive.openBox<BookHiveModel>(HiveTableConstant.bookTable);
     await Hive.openBox<BookAccessHiveModel>(HiveTableConstant.bookAccessTable);
+    await Hive.openBox<MyLibraryHiveModel>(HiveTableConstant.myLibraryTable);
   }
 
   // Close Boxes
@@ -166,6 +172,29 @@ class HiveService {
   Future<void> clearBookAccessBox() async {
     await _bookAccessBox.clear();
   }
+
+
+  // -------------------My Library Queries-----------------
+  Box<MyLibraryHiveModel> get _myLibraryBox =>
+      Hive.box<MyLibraryHiveModel>(HiveTableConstant.myLibraryTable);
+
+  // Cache all my library items
+    Future<void> cacheMyLibrary(List<MyLibraryHiveModel> models) async {
+      await _myLibraryBox.clear();
+      for (final model in models) {
+        await _myLibraryBox.put(model.accessId, model);
+      }
+    }
+
+  // Get all cached my library items
+    List<MyLibraryHiveModel> getCachedMyLibrary() {
+      return _myLibraryBox.values.toList();
+    }
+
+  // Clear cache
+    Future<void> clearMyLibraryCache() async {
+      await _myLibraryBox.clear();
+    }
 
 
   //-------------Splash Page---------------

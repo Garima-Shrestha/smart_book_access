@@ -70,4 +70,7 @@ class ApiEndpoints {
 
   // Last Read Position
   static String updateLastPosition(String bookId) => '/api/book-access/$bookId/last-position';
+
+  // My Library
+  static const String getMyLibrary = '/api/book-access/my-library';
 }
