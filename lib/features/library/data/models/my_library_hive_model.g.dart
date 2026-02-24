@@ -26,13 +26,15 @@ class MyLibraryHiveModelAdapter extends TypeAdapter<MyLibraryHiveModel> {
       progressPercent: fields[6] as int,
       timeLeftLabel: fields[7] as String,
       isExpired: fields[8] as bool,
+      isInactive: fields[9] as bool,
+      canReRent: fields[10] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, MyLibraryHiveModel obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.accessId)
       ..writeByte(1)
@@ -50,7 +52,11 @@ class MyLibraryHiveModelAdapter extends TypeAdapter<MyLibraryHiveModel> {
       ..writeByte(7)
       ..write(obj.timeLeftLabel)
       ..writeByte(8)
-      ..write(obj.isExpired);
+      ..write(obj.isExpired)
+      ..writeByte(9)
+      ..write(obj.isInactive)
+      ..writeByte(10)
+      ..write(obj.canReRent);
   }
 
   @override

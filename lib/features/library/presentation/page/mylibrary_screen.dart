@@ -72,7 +72,9 @@ class _MylibraryScreenState extends ConsumerState<MylibraryScreen> {
                       child: _MyLibraryCard(
                         item: item,
                         onTap: () async {
-                          if (item.isExpired) {
+                          final blocked = item.isExpired || item.isInactive;
+
+                          if (blocked) {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -97,7 +99,7 @@ class _MylibraryScreenState extends ConsumerState<MylibraryScreen> {
                               .read(myLibraryViewModelProvider.notifier)
                               .fetchMyLibrary();
                         },
-                        onReRent: item.isExpired
+                        onReRent: item.canReRent
                             ? () async {
                           await Navigator.push(
                             context,
@@ -108,9 +110,7 @@ class _MylibraryScreenState extends ConsumerState<MylibraryScreen> {
                             ),
                           );
 
-                          await ref
-                              .read(myLibraryViewModelProvider.notifier)
-                              .fetchMyLibrary();
+                          await ref.read(myLibraryViewModelProvider.notifier).fetchMyLibrary();
                         }
                             : null,
                       ),
@@ -246,6 +246,8 @@ class _MyLibraryCard extends StatelessWidget {
                         child: Text(
                           item.isExpired
                               ? "Rental Expired"
+                              : item.isInactive
+                              ? "Inactive"
                               : "Time left: ${item.timeLeftLabel.replaceAll('Time left ', '')}",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -256,7 +258,7 @@ class _MyLibraryCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (item.isExpired && onReRent != null) ...[
+                      if (item.canReRent && onReRent != null) ...[
                         const SizedBox(width: 10),
                         SizedBox(
                           height: 30,

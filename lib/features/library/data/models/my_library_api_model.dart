@@ -15,6 +15,8 @@ class MyLibraryApiModel {
   final int progressPercent; // 0 - 100
   final String timeLeftLabel;
   final bool isExpired;
+  final bool isInactive;
+  final bool canReRent;
 
   MyLibraryApiModel({
     required this.accessId,
@@ -26,6 +28,8 @@ class MyLibraryApiModel {
     required this.progressPercent,
     required this.timeLeftLabel,
     required this.isExpired,
+    required this.isInactive,
+    required this.canReRent,
   });
 
   factory MyLibraryApiModel.fromJson(Map<String, dynamic> json) =>
@@ -45,6 +49,8 @@ class MyLibraryApiModel {
       progressPercent: progressPercent,
       timeLeftLabel: timeLeftLabel,
       isExpired: isExpired,
+      isInactive: isInactive,
+      canReRent: canReRent,
     );
   }
 
@@ -60,6 +66,8 @@ class MyLibraryApiModel {
       progressPercent: entity.progressPercent,
       timeLeftLabel: entity.timeLeftLabel,
       isExpired: entity.isExpired,
+      isInactive: entity.isInactive,
+      canReRent: entity.canReRent,
     );
   }
 

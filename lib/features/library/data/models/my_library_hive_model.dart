@@ -6,7 +6,6 @@ part 'my_library_hive_model.g.dart';
 
 @HiveType(typeId: HiveTableConstant.myLibraryTypeId)
 class MyLibraryHiveModel extends HiveObject {
-
   @HiveField(0)
   final String accessId;
   @HiveField(1)
@@ -25,6 +24,10 @@ class MyLibraryHiveModel extends HiveObject {
   final String timeLeftLabel;
   @HiveField(8)
   final bool isExpired;
+  @HiveField(9)
+  final bool isInactive;
+  @HiveField(10)
+  final bool canReRent;
 
   MyLibraryHiveModel({
     required this.accessId,
@@ -36,9 +39,10 @@ class MyLibraryHiveModel extends HiveObject {
     required this.progressPercent,
     required this.timeLeftLabel,
     required this.isExpired,
+    required this.isInactive,
+    required this.canReRent,
   });
 
-  // From Entity
   factory MyLibraryHiveModel.fromEntity(MyLibraryEntity entity) {
     return MyLibraryHiveModel(
       accessId: entity.accessId,
@@ -50,10 +54,11 @@ class MyLibraryHiveModel extends HiveObject {
       progressPercent: entity.progressPercent,
       timeLeftLabel: entity.timeLeftLabel,
       isExpired: entity.isExpired,
+      isInactive: entity.isInactive,
+      canReRent: entity.canReRent,
     );
   }
 
-  // To Entity
   MyLibraryEntity toEntity() {
     return MyLibraryEntity(
       accessId: accessId,
@@ -65,10 +70,11 @@ class MyLibraryHiveModel extends HiveObject {
       progressPercent: progressPercent,
       timeLeftLabel: timeLeftLabel,
       isExpired: isExpired,
+      isInactive: isInactive,
+      canReRent: canReRent,
     );
   }
 
-  // ToEntityList
   static List<MyLibraryEntity> toEntityList(List<MyLibraryHiveModel> models) {
     return models.map((model) => model.toEntity()).toList();
   }

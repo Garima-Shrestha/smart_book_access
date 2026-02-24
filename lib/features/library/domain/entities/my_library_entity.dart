@@ -11,6 +11,8 @@ class MyLibraryEntity extends Equatable {
   final int progressPercent; // 0 - 100
   final String timeLeftLabel;
   final bool isExpired;
+  final bool isInactive;
+  final bool canReRent;
 
   const MyLibraryEntity({
     required this.accessId,
@@ -22,6 +24,8 @@ class MyLibraryEntity extends Equatable {
     required this.progressPercent,
     required this.timeLeftLabel,
     required this.isExpired,
+    required this.isInactive,
+    required this.canReRent,
   });
 
   @override
@@ -35,5 +39,7 @@ class MyLibraryEntity extends Equatable {
     progressPercent,
     timeLeftLabel,
     isExpired,
+    isInactive,
+    canReRent,
   ];
 }

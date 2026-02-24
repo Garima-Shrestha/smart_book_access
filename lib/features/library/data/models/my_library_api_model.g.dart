@@ -17,6 +17,8 @@ MyLibraryApiModel _$MyLibraryApiModelFromJson(Map<String, dynamic> json) =>
       progressPercent: (json['progressPercent'] as num).toInt(),
       timeLeftLabel: json['timeLeftLabel'] as String,
       isExpired: json['isExpired'] as bool,
+      isInactive: json['isInactive'] as bool,
+      canReRent: json['canReRent'] as bool,
     );
 
 Map<String, dynamic> _$MyLibraryApiModelToJson(MyLibraryApiModel instance) =>
@@ -30,4 +32,6 @@ Map<String, dynamic> _$MyLibraryApiModelToJson(MyLibraryApiModel instance) =>
       'progressPercent': instance.progressPercent,
       'timeLeftLabel': instance.timeLeftLabel,
       'isExpired': instance.isExpired,
+      'isInactive': instance.isInactive,
+      'canReRent': instance.canReRent,
     };
