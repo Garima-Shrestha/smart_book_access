@@ -25,9 +25,9 @@ class MyLibraryHiveModelAdapter extends TypeAdapter<MyLibraryHiveModel> {
       pages: fields[5] as int,
       progressPercent: fields[6] as int,
       timeLeftLabel: fields[7] as String,
-      isExpired: fields[8] as bool,
-      isInactive: fields[9] as bool,
-      canReRent: fields[10] as bool,
+      isExpired: fields[8] == null ? false : fields[8] as bool,
+      isInactive: fields[9] == null ? false : fields[9] as bool,
+      canReRent: fields[10] == null ? false : fields[10] as bool,
     );
   }
 

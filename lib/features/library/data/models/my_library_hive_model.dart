@@ -22,11 +22,11 @@ class MyLibraryHiveModel extends HiveObject {
   final int progressPercent;
   @HiveField(7)
   final String timeLeftLabel;
-  @HiveField(8)
+  @HiveField(8, defaultValue: false)
   final bool isExpired;
-  @HiveField(9)
+  @HiveField(9, defaultValue: false)
   final bool isInactive;
-  @HiveField(10)
+  @HiveField(10, defaultValue: false)
   final bool canReRent;
 
   MyLibraryHiveModel({
