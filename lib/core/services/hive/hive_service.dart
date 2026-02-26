@@ -6,6 +6,7 @@ import 'package:smart_book_access/features/auth/data/models/auth_hive_model.dart
 import 'package:smart_book_access/features/book/data/models/book_hive_model.dart';
 import 'package:smart_book_access/features/bookAccess/data/models/book_access_hive_model.dart';
 import 'package:smart_book_access/features/category/data/models/category_hive_model.dart';
+import 'package:smart_book_access/features/history/data/models/history_hive_model.dart';
 import 'package:smart_book_access/features/library/data/models/my_library_hive_model.dart';
 
 
@@ -57,6 +58,10 @@ class HiveService {
     if (!Hive.isAdapterRegistered(HiveTableConstant.myLibraryTypeId)) {
       Hive.registerAdapter(MyLibraryHiveModelAdapter());
     }
+
+    if (!Hive.isAdapterRegistered(HiveTableConstant.rentalTypeId)) {
+      Hive.registerAdapter(HistoryHiveModelAdapter());
+    }
   }
 
   // Open Boxes
@@ -66,6 +71,7 @@ class HiveService {
     await Hive.openBox<BookHiveModel>(HiveTableConstant.bookTable);
     await Hive.openBox<BookAccessHiveModel>(HiveTableConstant.bookAccessTable);
     await Hive.openBox<MyLibraryHiveModel>(HiveTableConstant.myLibraryTable);
+    await Hive.openBox<HistoryHiveModel>(HiveTableConstant.rentalTable);
   }
 
   // Close Boxes
@@ -197,9 +203,26 @@ class HiveService {
     }
 
 
-  //-------------Splash Page---------------
-  // Future<bool> isUserLoggedIn() async {
-  //   final box = Hive.box<AuthHiveModel>(HiveTableConstant.authTable);
-  //   return box.values.isNotEmpty;
-  // }
+
+  // -------------------History Queries-----------------
+  Box<HistoryHiveModel> get _historyBox =>
+      Hive.box<HistoryHiveModel>(HiveTableConstant.rentalTable);
+
+  // Cache history items
+  Future<void> cacheHistory(List<HistoryHiveModel> models) async {
+    await _historyBox.clear();
+    for (final model in models) {
+      await _historyBox.put(model.accessId, model);
+    }
+  }
+
+  // Get cached history items
+  List<HistoryHiveModel> getCachedHistory() {
+    return _historyBox.values.toList();
+  }
+
+  // Clear history cache
+  Future<void> clearHistoryCache() async {
+    await _historyBox.clear();
+  }
 }

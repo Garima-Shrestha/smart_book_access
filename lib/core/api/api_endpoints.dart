@@ -73,4 +73,7 @@ class ApiEndpoints {
 
   // My Library
   static const String getMyLibrary = '/api/book-access/my-library';
+
+  // History
+  static const String getMyHistory = '/api/book-access/history';
 }
