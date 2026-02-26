@@ -89,6 +89,10 @@ class _MylibraryScreenState extends ConsumerState<MylibraryScreen> {
               )
             else
               Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                  await ref.read(myLibraryViewModelProvider.notifier).fetchMyLibrary();
+                },
                 child: ListView.builder(
                   padding: const EdgeInsets.only(bottom: 10),
                   itemCount: libState.books.length,
@@ -136,6 +140,7 @@ class _MylibraryScreenState extends ConsumerState<MylibraryScreen> {
                     );
                   },
                 ),
+              ),
               ),
           ],
         ),
