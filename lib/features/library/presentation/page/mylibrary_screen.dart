@@ -1,16 +1,11 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:smart_book_access/core/api/api_client.dart';
 import 'package:smart_book_access/core/api/api_endpoints.dart';
-import 'package:smart_book_access/core/services/storage/token_service.dart';
 import 'package:smart_book_access/core/utils/snackbar_utils.dart';
-
-import 'package:smart_book_access/features/book/domain/entities/book_entity.dart';
 import 'package:smart_book_access/features/book/presentation/page/book_detail_page.dart';
+import 'package:smart_book_access/features/book/presentation/state/book_state.dart';
+import 'package:smart_book_access/features/book/presentation/view_model/book_view_model.dart';
 import 'package:smart_book_access/features/bookAccess/presentation/page/pdf_reader_page.dart';
-
 import 'package:smart_book_access/features/library/domain/entities/my_library_entity.dart';
 import 'package:smart_book_access/features/library/presentation/state/my_library_state.dart';
 import 'package:smart_book_access/features/library/presentation/view_model/my_library_view_model.dart';
@@ -23,6 +18,8 @@ class MylibraryScreen extends ConsumerStatefulWidget {
 }
 
 class _MylibraryScreenState extends ConsumerState<MylibraryScreen> {
+  String? _pendingBookId;
+
   @override
   Widget build(BuildContext context) {
     final libState = ref.watch(myLibraryViewModelProvider);
@@ -34,6 +31,37 @@ class _MylibraryScreenState extends ConsumerState<MylibraryScreen> {
       }
     });
 
+    ref.listen<BookState>(bookViewModelProvider, (prev, next) async {
+      if (_pendingBookId == null) return;
+
+      if (next.status == BookStatus.error && next.errorMessage != null) {
+        SnackbarUtils.showError(context, next.errorMessage!);
+        ref.read(bookViewModelProvider.notifier).clearError();
+        setState(() {
+          _pendingBookId = null;
+        });
+        return;
+      }
+
+      if (next.status == BookStatus.success &&
+          next.selectedBook != null &&
+          next.selectedBook!.bookId == _pendingBookId) {
+        final book = next.selectedBook!;
+        setState(() {
+          _pendingBookId = null;
+        });
+
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => BookDetailsPage(book: book),
+          ),
+        );
+
+        await ref.read(myLibraryViewModelProvider.notifier).fetchMyLibrary();
+      }
+    });
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7F9FC),
       appBar: AppBar(
@@ -42,7 +70,7 @@ class _MylibraryScreenState extends ConsumerState<MylibraryScreen> {
         elevation: 0,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+        padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 40.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -67,50 +95,41 @@ class _MylibraryScreenState extends ConsumerState<MylibraryScreen> {
                   itemBuilder: (context, index) {
                     final item = libState.books[index];
 
+                    Future<void> openCorrectPage() async {
+                      final blocked = item.isExpired || item.isInactive;
+
+                      if (blocked) {
+                        setState(() {
+                          _pendingBookId = item.bookId;
+                        });
+                        await ref.read(bookViewModelProvider.notifier).getBookById(item.bookId);
+                        return;
+                      }
+
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PdfReaderPage(
+                            bookId: item.bookId,
+                            title: item.title,
+                          ),
+                        ),
+                      );
+
+                      await ref.read(myLibraryViewModelProvider.notifier).fetchMyLibrary();
+                    }
+
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 14),
                       child: _MyLibraryCard(
                         item: item,
-                        onTap: () async {
-                          final blocked = item.isExpired || item.isInactive;
-
-                          if (blocked) {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BookDetailsLoaderPage(
-                                  bookId: item.bookId,
-                                ),
-                              ),
-                            );
-                          } else {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => PdfReaderPage(
-                                  bookId: item.bookId,
-                                  title: item.title,
-                                ),
-                              ),
-                            );
-                          }
-
-                          await ref
-                              .read(myLibraryViewModelProvider.notifier)
-                              .fetchMyLibrary();
-                        },
+                        onTap: openCorrectPage,
                         onReRent: item.canReRent
                             ? () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BookDetailsLoaderPage(
-                                bookId: item.bookId,
-                              ),
-                            ),
-                          );
-
-                          await ref.read(myLibraryViewModelProvider.notifier).fetchMyLibrary();
+                          setState(() {
+                            _pendingBookId = item.bookId;
+                          });
+                          await ref.read(bookViewModelProvider.notifier).getBookById(item.bookId);
                         }
                             : null,
                       ),
@@ -171,17 +190,16 @@ class _MyLibraryCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(6),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: coverUrl == null
-                  ? const Center(child: Icon(Icons.menu_book, size: 44))
-                  : Image.network(
-                coverUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const Center(
-                  child: Icon(Icons.broken_image, size: 44),
+                image: coverUrl == null
+                    ? null
+                    : DecorationImage(
+                  image: NetworkImage(coverUrl),
+                  fit: BoxFit.cover,
                 ),
               ),
+              child: coverUrl == null
+                  ? const Center(child: Icon(Icons.menu_book, size: 44))
+                  : null,
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -228,15 +246,12 @@ class _MyLibraryCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: LinearProgressIndicator(
-                      value: progressValue,
-                      minHeight: 5,
-                      backgroundColor: Colors.black12,
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        Color(0xFF64B5F6),
-                      ),
+                  LinearProgressIndicator(
+                    value: progressValue,
+                    minHeight: 5,
+                    backgroundColor: Colors.black12,
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      Color(0xFF64B5F6),
                     ),
                   ),
                   const SizedBox(height: 14),
@@ -294,103 +309,5 @@ class _MyLibraryCard extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class BookDetailsLoaderPage extends ConsumerStatefulWidget {
-  final String bookId;
-
-  const BookDetailsLoaderPage({super.key, required this.bookId});
-
-  @override
-  ConsumerState<BookDetailsLoaderPage> createState() =>
-      _BookDetailsLoaderPageState();
-}
-
-class _BookDetailsLoaderPageState extends ConsumerState<BookDetailsLoaderPage> {
-  bool _loading = true;
-  String? _error;
-  BookEntity? _book;
-
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(_loadBook);
-  }
-
-  Future<void> _loadBook() async {
-    try {
-      final apiClient = ref.read(apiClientProvider);
-      final token = ref.read(tokenServiceProvider).getToken();
-
-      final res = await apiClient.get(
-        ApiEndpoints.getBookById(widget.bookId),
-        options: Options(
-          headers: token == null ? {} : {"Authorization": "Bearer $token"},
-        ),
-      );
-
-      if (res.data == null || res.data['success'] != true) {
-        setState(() {
-          _loading = false;
-          _error = "Failed to load book";
-        });
-        return;
-      }
-
-      final data = res.data['data'] as Map<String, dynamic>;
-
-      final book = BookEntity(
-        bookId: (data['_id'] ?? data['id']).toString(),
-        title: (data['title'] ?? '').toString(),
-        author: (data['author'] ?? '').toString(),
-        description: (data['description'] ?? '').toString(),
-        genre: (data['genre'] ?? '').toString(),
-        publishedDate: (data['publishedDate'] ?? '').toString(),
-        pages: (data['pages'] is int)
-            ? data['pages'] as int
-            : int.tryParse(data['pages'].toString()) ?? 0,
-        price: (data['price'] is num)
-            ? (data['price'] as num).toDouble()
-            : double.tryParse(data['price'].toString()) ?? 0,
-        coverImageUrl: (data['coverImageUrl'] ?? '').toString(),
-      );
-
-      setState(() {
-        _loading = false;
-        _book = book;
-      });
-    } on DioException catch (e) {
-      setState(() {
-        _loading = false;
-        _error = e.response?.data?['message']?.toString() ??
-            e.message ??
-            "Request failed";
-      });
-    } catch (e) {
-      setState(() {
-        _loading = false;
-        _error = e.toString();
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_loading) {
-      return Scaffold(
-        appBar: AppBar(toolbarHeight: 0.0),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (_error != null) {
-      return Scaffold(
-        appBar: AppBar(toolbarHeight: 0.0),
-        body: Center(child: Text(_error!)),
-      );
-    }
-
-    return BookDetailsPage(book: _book!);
   }
 }

@@ -160,16 +160,16 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
                                 color: Colors.white,
+                                image: coverUrl == null
+                                    ? null
+                                    : DecorationImage(
+                                  image: NetworkImage(coverUrl),
+                                  fit: BoxFit.cover,
+                                ),
                               ),
-                              clipBehavior: Clip.antiAlias,
                               child: coverUrl == null
                                   ? const Center(child: Icon(Icons.menu_book, size: 42))
-                                  : Image.network(
-                                coverUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) =>
-                                const Center(child: Icon(Icons.broken_image, size: 42)),
-                              ),
+                                  : null,
                             ),
                             const SizedBox(width: 14),
                             Expanded(
