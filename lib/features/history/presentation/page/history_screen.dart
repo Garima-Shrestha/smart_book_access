@@ -109,6 +109,12 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                   separatorBuilder: (_, __) => const SizedBox(height: 14),
                   itemBuilder: (context, index) {
                     final item = historyState.historyList[index];
+                    final activeBookIds = historyState.historyList
+                        .where((x) => !(x.isExpired || x.isInactive))
+                        .map((x) => x.bookId)
+                        .toSet();
+
+                    final bool hasActiveNow = activeBookIds.contains(item.bookId);
                     final bool blocked = item.isExpired || item.isInactive;
 
                     final genreName = (categoryState.categories.isEmpty)
@@ -206,7 +212,18 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                     "Expiry: ${_formatDate(item.expiresAt)}",
                                     style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                                   ),
-                                  if (item.isExpired || item.isInactive) ...[
+                                  if ((item.isExpired || item.isInactive) && hasActiveNow) ...[
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      "Already re-rented — open the book.",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF2563EB),
+                                      ),
+                                    ),
+                                  ],
+                                  if ((item.isExpired || item.isInactive) && !hasActiveNow) ...[
                                     const SizedBox(height: 12),
                                     Align(
                                       alignment: Alignment.center,
