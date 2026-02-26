@@ -121,22 +121,15 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                         .categoryName;
 
                     Future<void> openCorrectPage() async {
-                      if (blocked) {
-                        setState(() {
-                          _pendingBookId = item.bookId;
-                        });
-                        await ref.read(bookViewModelProvider.notifier).getBookById(item.bookId);
-                      } else {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => PdfReaderPage(
-                              bookId: item.bookId,
-                              title: item.title ?? "",
-                            ),
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PdfReaderPage(
+                            bookId: item.bookId,
+                            title: item.title ?? "",
                           ),
-                        );
-                      }
+                        ),
+                      );
                     }
 
                     final coverUrl = (item.coverImageUrl == null || item.coverImageUrl!.isEmpty)
@@ -213,7 +206,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                     "Expiry: ${_formatDate(item.expiresAt)}",
                                     style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                                   ),
-                                  if (blocked) ...[
+                                  if (item.isExpired || item.isInactive) ...[
                                     const SizedBox(height: 12),
                                     Align(
                                       alignment: Alignment.center,
