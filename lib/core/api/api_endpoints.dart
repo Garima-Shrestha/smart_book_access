@@ -76,4 +76,8 @@ class ApiEndpoints {
 
   // History
   static const String getMyHistory = '/api/book-access/history';
+
+  // Khalti
+  static const String khaltiInitiate = '/api/khalti/initiate';
+  static const String khaltiVerify = '/api/khalti/verify';
 }

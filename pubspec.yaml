@@ -148,6 +148,8 @@ dependencies:
   flutter_svg: ^2.0.10+1
   syncfusion_flutter_pdfviewer: ^28.2.3
   syncfusion_flutter_pdf: ^28.2.3
+  webview_flutter: ^4.7.0
+  webview_flutter_android: ^3.0.0
 
   # Real-time Features
   web_socket_channel: ^3.0.3
