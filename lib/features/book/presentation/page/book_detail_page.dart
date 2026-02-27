@@ -84,7 +84,7 @@ class BookDetailsPage extends ConsumerWidget {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        "Rs.${book.price.toInt()}",
+                        "Rs. ${book.price.toInt()}",
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,

@@ -21,10 +21,14 @@ class ConfirmPaymentPage extends ConsumerStatefulWidget {
 class _ConfirmPaymentPageState extends ConsumerState<ConfirmPaymentPage> {
   DateTime? _selectedDate;
   int _numberOfDays = 0;
-  final DateTime _rentedDate = DateTime.now();
+  static const int _minDays = 1;
+  static const int _maxDays = 30;
+
+  late final DateTime _rentedDate = DateTime.now();
+  late final DateTime _cleanRentedDate = DateTime(_rentedDate.year, _rentedDate.month, _rentedDate.day);
 
   void _calculateDays(DateTime selectedDate) {
-    final cleanToday = DateTime(_rentedDate.year, _rentedDate.month, _rentedDate.day);
+    final cleanToday = _cleanRentedDate;
     final cleanSelected = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
 
     final diff = cleanSelected.difference(cleanToday).inDays + 1;
@@ -35,12 +39,17 @@ class _ConfirmPaymentPageState extends ConsumerState<ConfirmPaymentPage> {
   }
 
   Future<void> _selectDate() async {
+    final firstDate = _cleanRentedDate;
+    final lastDate = _cleanRentedDate.add(const Duration(days: _maxDays - 1));
+    final initialDate = _selectedDate ?? firstDate;
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _rentedDate.add(const Duration(days: 1)),
-      firstDate: _rentedDate,
-      lastDate: _rentedDate.add(const Duration(days: 365)),
+      initialDate: initialDate.isAfter(lastDate) ? lastDate : initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
     );
+
     if (picked != null) {
       _calculateDays(picked);
     }
@@ -53,6 +62,17 @@ class _ConfirmPaymentPageState extends ConsumerState<ConfirmPaymentPage> {
   void _handleConfirmPayment() {
     if (_selectedDate == null) {
       return SnackbarUtils.showError(context, "Please select an expiry date");
+    }
+
+    final cleanSelected = DateTime(_selectedDate!.year, _selectedDate!.month, _selectedDate!.day);
+    final maxAllowed = _cleanRentedDate.add(const Duration(days: _maxDays - 1));
+
+    if (cleanSelected.isBefore(_cleanRentedDate)) {
+      return SnackbarUtils.showError(context, "Expiry date cannot be before today.");
+    }
+
+    if (cleanSelected.isAfter(maxAllowed)) {
+      return SnackbarUtils.showError(context, "Maximum rental is $_maxDays days.");
     }
 
     final book = widget.book;
