@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_book_access/core/sensors/shake_service.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -50,6 +51,7 @@ class _PdfReaderPageState extends ConsumerState<PdfReaderPage> {
   bool _docLoadedOnce = false;
   bool _restoringNow = false;
   bool _pdfLoadError = false;
+  late ShakeService _shakeService;
 
   late Future<File?> _cachedPdfFuture;
 
@@ -58,6 +60,17 @@ class _PdfReaderPageState extends ConsumerState<PdfReaderPage> {
     super.initState();
 
     _cachedPdfFuture = _getCachedPdfFileIfExists();
+
+    _shakeService = ShakeService(
+      onShake: () {
+        if (!mounted) return;
+        try {
+          final nextPage = _controller.pageNumber + 1;
+          _controller.jumpToPage(nextPage);
+        } catch (_) {}
+      },
+    );
+    _shakeService.start();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final ok = await _verifyAccess();
@@ -86,6 +99,7 @@ class _PdfReaderPageState extends ConsumerState<PdfReaderPage> {
 
   @override
   void dispose() {
+    _shakeService.stop();
     _debounce?.cancel();
     _searchResult?.clear();
     super.dispose();

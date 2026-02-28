@@ -151,6 +151,7 @@ dependencies:
   syncfusion_flutter_pdf: ^28.2.3
   webview_flutter: ^4.7.0
   webview_flutter_android: ^3.0.0
+  sensors_plus: ^4.0.2
 
   # Real-time Features
   web_socket_channel: ^3.0.3
