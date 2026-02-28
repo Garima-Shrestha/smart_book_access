@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/core/api/api_endpoints.dart';
@@ -197,8 +198,10 @@ class _MyLibraryCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
                 image: coverUrl == null
                     ? null
+                  //   : DecorationImage(
+                  // image: NetworkImage(coverUrl),
                     : DecorationImage(
-                  image: NetworkImage(coverUrl),
+                  image: CachedNetworkImageProvider(coverUrl),
                   fit: BoxFit.cover,
                 ),
               ),

@@ -22,7 +22,8 @@ class MyLibraryLocalDataSource implements IMyLibraryLocalDataSource {
   @override
   Future<List<MyLibraryHiveModel>> getCachedMyLibrary() async {
     try {
-      return _hiveService.getCachedMyLibrary();
+      final list = _hiveService.getCachedMyLibrary();
+      return List<MyLibraryHiveModel>.from(list);
     } catch (_) {
       return [];
     }

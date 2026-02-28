@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/core/api/api_endpoints.dart';
@@ -53,8 +54,14 @@ class BookDetailsPage extends ConsumerWidget {
                         offset: const Offset(0, 8),
                       )
                     ],
+                    // image: DecorationImage(
+                    //   image: NetworkImage('${ApiEndpoints.serverUrl}${book.coverImageUrl}'),
+                    //   fit: BoxFit.cover,
+                    // ),
                     image: DecorationImage(
-                      image: NetworkImage('${ApiEndpoints.serverUrl}${book.coverImageUrl}'),
+                      image: CachedNetworkImageProvider(
+                        '${ApiEndpoints.serverUrl}${book.coverImageUrl}',
+                      ),
                       fit: BoxFit.cover,
                     ),
                   ),

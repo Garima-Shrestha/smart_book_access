@@ -29,7 +29,7 @@ class HistoryLocalDatasource implements IHistoryLocalDataSource {
   Future<List<HistoryHiveModel>> getCachedHistory() async {
     try {
       final items = _hiveService.getCachedHistory();
-      return Future.value(items);
+      return Future.value(List<HistoryHiveModel>.from(items));
     } catch (e) {
       return Future.value([]);
     }

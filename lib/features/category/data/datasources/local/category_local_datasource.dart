@@ -19,9 +19,8 @@ class CategoryLocalDatasource implements ICategoryLocalDataSource {
   Future<List<CategoryHiveModel>> getAllCategories() async {
     try {
       final categories = _hiveService.getAllCategories();
-      return Future.value(categories);
+      return Future.value(List<CategoryHiveModel>.from(categories));
     } catch (e) {
-      // Return empty list if something goes wrong
       return Future.value([]);
     }
   }
@@ -31,7 +30,6 @@ class CategoryLocalDatasource implements ICategoryLocalDataSource {
     try {
       await _hiveService.addAllCategories(categories);
     } catch (e) {
-      // Handle error silently or log it
       print("Hive AddAllCategories Error: $e");
     }
   }

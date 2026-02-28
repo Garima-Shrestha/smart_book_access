@@ -126,8 +126,9 @@ class HiveService {
       Hive.box<CategoryHiveModel>(HiveTableConstant.categoryTable);
 
   Future<void> addAllCategories(List<CategoryHiveModel> models) async {
-    for (var model in models) {
-      await _categoryBox.put(model.categoryId, model);
+    await _categoryBox.clear();
+    for (int i = 0; i < models.length; i++) {
+      await _categoryBox.put(i, models[i]);
     }
   }
 
@@ -185,12 +186,12 @@ class HiveService {
       Hive.box<MyLibraryHiveModel>(HiveTableConstant.myLibraryTable);
 
   // Cache all my library items
-    Future<void> cacheMyLibrary(List<MyLibraryHiveModel> models) async {
+  Future<void> cacheMyLibrary(List<MyLibraryHiveModel> models) async {
       await _myLibraryBox.clear();
-      for (final model in models) {
-        await _myLibraryBox.put(model.accessId, model);
+      for (int i = 0; i < models.length; i++) {
+        await _myLibraryBox.put(i, models[i]);
       }
-    }
+  }
 
   // Get all cached my library items
     List<MyLibraryHiveModel> getCachedMyLibrary() {
@@ -211,8 +212,8 @@ class HiveService {
   // Cache history items
   Future<void> cacheHistory(List<HistoryHiveModel> models) async {
     await _historyBox.clear();
-    for (final model in models) {
-      await _historyBox.put(model.accessId, model);
+    for (int i = 0; i < models.length; i++) {
+      await _historyBox.put(i, models[i]);
     }
   }
 

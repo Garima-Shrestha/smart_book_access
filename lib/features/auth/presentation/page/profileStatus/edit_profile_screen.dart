@@ -294,16 +294,16 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       backgroundImage: _imageLoadFailed ? null : getImageProvider(),
 
                       // It handles cases where the image file is missing on the server [If the image is null, this listener MUST also be null]
-                        onBackgroundImageError: (_imageLoadFailed || getImageProvider() == null)
-                            ? null
-                            : (exception, stackTrace) {
-                          // If it fails, set this to true to force the letter to show
-                          if (!_imageLoadFailed) {
-                            setState(() {
-                              _imageLoadFailed = true;
-                            });
-                          }
-                        },
+                      onBackgroundImageError: (_imageLoadFailed || getImageProvider() == null)
+                          ? null
+                          : (exception, stackTrace) {
+                        // If it fails, set this to true to force the letter to show
+                        if (!_imageLoadFailed) {
+                          setState(() {
+                            _imageLoadFailed = true;
+                          });
+                        }
+                      },
 
                       // If no image, display the 1st letter of username
                       child: (getImageProvider() == null || _imageLoadFailed)
