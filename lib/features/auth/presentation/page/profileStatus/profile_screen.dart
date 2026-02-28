@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/app/routes/app_routes.dart';
+import 'package:smart_book_access/core/api/api_endpoints.dart';
 import 'package:smart_book_access/features/auth/presentation/page/login_page.dart';
 import 'package:smart_book_access/features/auth/presentation/page/profileStatus/account_details_screen.dart';
 import 'package:smart_book_access/features/auth/presentation/page/profileStatus/edit_profile_screen.dart';
@@ -36,7 +38,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       // If the image is NOT on this phone, download it from our Node.js server
       if (savedPath.startsWith('/uploads')) {
         final timestamp = DateTime.now().millisecondsSinceEpoch;
-        return NetworkImage("http://10.0.2.2:5050$savedPath?v=$timestamp");
+        // return NetworkImage("http://10.0.2.2:5050$savedPath?v=$timestamp");
+        // return NetworkImage("${ApiEndpoints.serverUrl}$savedPath?v=$timestamp");
+        return CachedNetworkImageProvider(
+          "${ApiEndpoints.serverUrl}$savedPath?v=$timestamp",
+        );
       }
 
       // Handle local file paths

@@ -135,7 +135,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
             ),
 
             SizedBox(
-              height: 260,
+              height: 300,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.only(left: 20),

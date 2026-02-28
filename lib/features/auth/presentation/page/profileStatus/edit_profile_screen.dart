@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:smart_book_access/core/api/api_endpoints.dart';
 import 'package:smart_book_access/core/utils/snackbar_utils.dart';
 import 'package:smart_book_access/features/auth/presentation/state/auth_state.dart';
 import 'package:smart_book_access/features/auth/presentation/view_model/auth_view_model.dart';
@@ -240,7 +242,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
       // Load from Backend (Node.js server)
       if (savedPath.startsWith('/uploads')) {
-        return NetworkImage("http://10.0.2.2:5050$savedPath");
+        // return NetworkImage("http://10.0.2.2:5050$savedPath");
+        // return NetworkImage("${ApiEndpoints.serverUrl}$savedPath");
+        return CachedNetworkImageProvider(
+          "${ApiEndpoints.serverUrl}$savedPath",
+        );
       }
 
       // Load from Phone Storage (if path is local)
