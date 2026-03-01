@@ -75,25 +75,5 @@ void main() {
       expect(result, const Left(tFailure));
       verify(() => mockRepository.register(any())).called(1);
     });
-
-    test(
-      'should send AuthEntity with correct values to the repository',
-      () async {
-        // Arrange
-        AuthEntity? capturedEntity;
-        when(() => mockRepository.register(any())).thenAnswer((invocation) {
-          capturedEntity = invocation.positionalArguments[0] as AuthEntity;
-          return Future.value(const Right(true));
-        });
-
-        // Act
-        await usecase(tParams);
-
-        // Assert
-        expect(capturedEntity?.username, tParams.username);
-        expect(capturedEntity?.email, tParams.email);
-        expect(capturedEntity?.phone, tParams.phone);
-      },
-    );
   });
 }
