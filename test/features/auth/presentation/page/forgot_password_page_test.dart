@@ -1,9 +1,9 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
+import 'package:smart_book_access/core/widgets/my_button.dart';
 import 'package:smart_book_access/features/auth/domain/usecase/change_password_usecase.dart';
 import 'package:smart_book_access/features/auth/domain/usecase/forgot_password_usecase.dart';
 import 'package:smart_book_access/features/auth/domain/usecase/login_usecase.dart';
@@ -11,7 +11,7 @@ import 'package:smart_book_access/features/auth/domain/usecase/logout_usecase.da
 import 'package:smart_book_access/features/auth/domain/usecase/register_usecase.dart';
 import 'package:smart_book_access/features/auth/domain/usecase/reset_password_usecase.dart';
 import 'package:smart_book_access/features/auth/domain/usecase/update_profile_usecase.dart';
-import 'package:smart_book_access/features/auth/presentation/page/profileStatus/profile_screen.dart';
+import 'package:smart_book_access/features/auth/presentation/page/forgot_password_page.dart';
 import 'package:smart_book_access/core/services/storage/user_session_service.dart';
 
 class MockRegisterUsecase extends Mock implements RegisterUsecase {}
@@ -40,6 +40,31 @@ void main() {
   late MockResetPasswordUsecase mockResetPasswordUsecase;
   late MockUserSessionService mockSessionService;
 
+  setUpAll(() {
+    registerFallbackValue(const LoginUsecaseParams(email: '', password: ''));
+    registerFallbackValue(
+      const RegisterUsecaseParams(
+        username: '',
+        email: '',
+        countryCode: '',
+        phone: '',
+        password: '',
+      ),
+    );
+    registerFallbackValue(
+      const UpdateProfileUsecaseParams(
+        username: '',
+        email: '',
+        countryCode: '',
+        phone: '',
+      ),
+    );
+    registerFallbackValue(
+      const ChangePasswordParams(oldPassword: '', newPassword: ''),
+    );
+    registerFallbackValue(const ResetPasswordParams(token: '', password: ''));
+  });
+
   setUp(() {
     mockRegisterUsecase = MockRegisterUsecase();
     mockLoginUsecase = MockLoginUsecase();
@@ -50,19 +75,7 @@ void main() {
     mockResetPasswordUsecase = MockResetPasswordUsecase();
     mockSessionService = MockUserSessionService();
 
-    when(() => mockSessionService.isLoggedIn()).thenReturn(true);
-    when(() => mockSessionService.getCurrentUserId()).thenReturn('1');
-    when(() => mockSessionService.getCurrentUserName()).thenReturn('Test User');
-    when(
-      () => mockSessionService.getCurrentUserEmail(),
-    ).thenReturn('test@gmail.com');
-    when(
-      () => mockSessionService.getCurrentUserPhoneNumber(),
-    ).thenReturn('9800000000');
-    when(
-      () => mockSessionService.getCurrentUserCountryCode(),
-    ).thenReturn('+977');
-    when(() => mockSessionService.getCurrentUserImageUrl()).thenReturn(null);
+    when(() => mockSessionService.isLoggedIn()).thenReturn(false);
   });
 
   Widget createTestWidget() {
@@ -85,39 +98,34 @@ void main() {
         ),
         userSessionServiceProvider.overrideWithValue(mockSessionService),
       ],
-      child: const MaterialApp(home: ProfileScreen()),
+      child: const MaterialApp(home: ForgotPasswordPage()),
     );
   }
 
-  group('ProfileScreen Widget Tests', () {
-    testWidgets('should display user name and email from session', (
+  group('ForgotPasswordPage Widget Tests', () {
+    testWidgets('should show validation error when email is empty', (
       tester,
     ) async {
       await tester.pumpWidget(createTestWidget());
-      await tester.pump();
       await tester.pumpAndSettle();
 
-      expect(find.text('Test User'), findsOneWidget);
-      expect(find.text('test@gmail.com'), findsOneWidget);
+      await tester.tap(find.byType(MyButton));
+      await tester.pump();
+
+      expect(find.text('Email is required'), findsOneWidget);
     });
 
-    testWidgets('should call logout when logout button is tapped', (
+    testWidgets('should show validation error for invalid email', (
       tester,
     ) async {
-      when(
-        () => mockLogoutUsecase(),
-      ).thenAnswer((_) async => const Right(true));
-
       await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextFormField), 'invalidemail');
+      await tester.tap(find.byType(MyButton));
       await tester.pump();
-      await tester.pumpAndSettle();
 
-      final logoutBtn = find.text('Logout');
-      await tester.ensureVisible(logoutBtn);
-      await tester.tap(logoutBtn);
-      await tester.pumpAndSettle();
-
-      verify(() => mockLogoutUsecase()).called(1);
+      expect(find.text('Please enter a valid email address'), findsOneWidget);
     });
   });
 }
