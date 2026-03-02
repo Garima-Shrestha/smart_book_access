@@ -29,7 +29,7 @@ class BookViewModel extends Notifier<BookState> {
 
     final params = GetAllBooksParams(
       page: state.page,
-      size: 10,
+      size: 100,
       searchTerm: searchTerm,
     );
 
@@ -51,7 +51,7 @@ class BookViewModel extends Notifier<BookState> {
             status: BookStatus.success,
             books: state.page == 1 ? books : [...state.books, ...books],
             page: state.page + 1,
-            hasReachedMax: books.length < 10,
+            hasReachedMax: books.length < 100,
           );
         }
       },
