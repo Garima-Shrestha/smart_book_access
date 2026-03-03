@@ -29,7 +29,7 @@ class BookAccessLocalDatasource implements IBookAccessLocalDataSource {
       final userId = _userSessionService.getCurrentUserId();
       if (userId == null) return null;
 
-      final access = await _hiveService.getBookAccess(bookId);
+      final access = _hiveService.getBookAccess(bookId, userId);
       return access;
     } catch (e) {
       return null;
@@ -42,7 +42,7 @@ class BookAccessLocalDatasource implements IBookAccessLocalDataSource {
       final userId = _userSessionService.getCurrentUserId();
       if (userId == null) return;
 
-      await _hiveService.saveBookAccess(model);
+      await _hiveService.saveBookAccess(model, userId);
     } catch (e) {
       // Error handling
     }
@@ -51,12 +51,13 @@ class BookAccessLocalDatasource implements IBookAccessLocalDataSource {
   @override
   Future<void> addBookmark(String bookId, BookmarkHiveModel bookmark) async {
     try {
-      if (_userSessionService.getCurrentUserId() == null) return;
+      final userId = _userSessionService.getCurrentUserId();
+      if (userId == null) return;
 
-      final current = await _hiveService.getBookAccess(bookId);
+      final current = _hiveService.getBookAccess(bookId, userId);
       if (current != null) {
         current.bookmarks.add(bookmark);
-        await _hiveService.saveBookAccess(current);
+        await _hiveService.saveBookAccess(current, userId);
       }
     } catch (e) {}
   }
@@ -64,12 +65,13 @@ class BookAccessLocalDatasource implements IBookAccessLocalDataSource {
   @override
   Future<void> removeBookmark(String bookId, int index) async {
     try {
-      if (_userSessionService.getCurrentUserId() == null) return;
+      final userId = _userSessionService.getCurrentUserId();
+      if (userId == null) return;
 
-      final current = await _hiveService.getBookAccess(bookId);
+      final current = _hiveService.getBookAccess(bookId, userId);
       if (current != null && current.bookmarks.length > index) {
         current.bookmarks.removeAt(index);
-        await _hiveService.saveBookAccess(current);
+        await _hiveService.saveBookAccess(current, userId);
       }
     } catch (e) {}
   }
@@ -77,12 +79,13 @@ class BookAccessLocalDatasource implements IBookAccessLocalDataSource {
   @override
   Future<void> addQuote(String bookId, QuoteHiveModel quote) async {
     try {
-      if (_userSessionService.getCurrentUserId() == null) return;
+      final userId = _userSessionService.getCurrentUserId();
+      if (userId == null) return;
 
-      final current = await _hiveService.getBookAccess(bookId);
+      final current = _hiveService.getBookAccess(bookId, userId);
       if (current != null) {
         current.quotes.add(quote);
-        await _hiveService.saveBookAccess(current);
+        await _hiveService.saveBookAccess(current, userId);
       }
     } catch (e) {}
   }
@@ -90,12 +93,13 @@ class BookAccessLocalDatasource implements IBookAccessLocalDataSource {
   @override
   Future<void> removeQuote(String bookId, int index) async {
     try {
-      if (_userSessionService.getCurrentUserId() == null) return;
+      final userId = _userSessionService.getCurrentUserId();
+      if (userId == null) return;
 
-      final current = await _hiveService.getBookAccess(bookId);
+      final current = _hiveService.getBookAccess(bookId, userId);
       if (current != null && current.quotes.length > index) {
         current.quotes.removeAt(index);
-        await _hiveService.saveBookAccess(current);
+        await _hiveService.saveBookAccess(current, userId);
       }
     } catch (e) {}
   }
@@ -103,9 +107,10 @@ class BookAccessLocalDatasource implements IBookAccessLocalDataSource {
   @override
   Future<void> updateLastPosition(String bookId, LastPositionHiveModel lastPosition) async {
     try {
-      if (_userSessionService.getCurrentUserId() == null) return;
+      final userId = _userSessionService.getCurrentUserId();
+      if (userId == null) return;
 
-      final current = await _hiveService.getBookAccess(bookId);
+      final current = _hiveService.getBookAccess(bookId, userId);
       if (current != null) {
         final updated = BookAccessHiveModel(
           id: current.id,
@@ -115,7 +120,7 @@ class BookAccessLocalDatasource implements IBookAccessLocalDataSource {
           quotes: current.quotes,
           lastPosition: lastPosition,
         );
-        await _hiveService.saveBookAccess(updated);
+        await _hiveService.saveBookAccess(updated, userId);
       }
     } catch (e) {}
   }

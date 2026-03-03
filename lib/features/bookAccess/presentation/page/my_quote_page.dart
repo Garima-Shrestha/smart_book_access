@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/core/api/api_client.dart';
 import 'package:smart_book_access/core/api/api_endpoints.dart';
 import 'package:smart_book_access/core/services/hive/hive_service.dart';
+import 'package:smart_book_access/core/services/storage/user_session_service.dart';
 import 'package:smart_book_access/core/utils/snackbar_utils.dart';
 import 'package:smart_book_access/core/services/storage/token_service.dart';
 
@@ -310,17 +311,19 @@ class _MyQuotesPageState extends ConsumerState<MyQuotesPage> {
   Future<void> _loadQuotesFromCache({required bool append}) async {
     try {
       final hive = ref.read(hiveServiceProvider);
-      // Get all cached book accesses that have quotes
+      final userSession = ref.read(userSessionServiceProvider);
+      final userId = userSession.getCurrentUserId();
+
       final cachedLibrary = hive.getCachedMyLibrary();
       final rows = <_BookAccessRow>[];
 
       for (final libItem in cachedLibrary) {
-        final bookAccess = await hive.getBookAccess(libItem.bookId);
+        final bookAccess = userId != null
+            ? hive.getBookAccess(libItem.bookId, userId)  // ← add userId
+            : null;
         if (bookAccess == null || bookAccess.quotes.isEmpty) continue;
 
-        // Get book info from Hive
         final bookHive = hive.getBookById(libItem.bookId);
-
         final quotes = bookAccess.quotes.map((q) {
           return _Quote(page: q.page, text: q.text);
         }).toList();

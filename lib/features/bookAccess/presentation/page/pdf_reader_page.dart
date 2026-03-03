@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/core/sensors/proximity_hold_service.dart';
 import 'package:smart_book_access/core/sensors/shake_service.dart';
+import 'package:smart_book_access/core/services/storage/user_session_service.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -161,7 +162,11 @@ class _PdfReaderPageState extends ConsumerState<PdfReaderPage> {
   Future<bool> _verifyAccessFromCache() async {
     try {
       final hive = ref.read(hiveServiceProvider);
-      final cached = await hive.getBookAccess(widget.bookId);
+      final userSession = ref.read(userSessionServiceProvider);
+      final userId = userSession.getCurrentUserId();
+      if (userId == null) return false;
+
+      final cached = hive.getBookAccess(widget.bookId, userId);
       if (cached == null) return false;
       final pdfUrl = cached.pdfUrl;
       if (pdfUrl == null || pdfUrl.trim().isEmpty) return false;

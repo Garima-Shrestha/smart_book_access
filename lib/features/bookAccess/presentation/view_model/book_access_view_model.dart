@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_book_access/core/services/hive/hive_service.dart';
+import 'package:smart_book_access/core/services/storage/user_session_service.dart';
 import 'package:smart_book_access/features/bookAccess/domain/entities/book_access_entity.dart';
 import 'package:smart_book_access/features/bookAccess/domain/usecase/add_bookmark_usecase.dart';
 import 'package:smart_book_access/features/bookAccess/domain/usecase/add_quote_usecase.dart';
@@ -157,7 +158,11 @@ class BookAccessViewModel extends Notifier<BookAccessState> {
   Future<void> fetchBookAccessFromCache(String bookId) async {
     try {
       final hive = ref.read(hiveServiceProvider);
-      final cached = await hive.getBookAccess(bookId);
+      final userSession = ref.read(userSessionServiceProvider);
+      final userId = userSession.getCurrentUserId();
+      if (userId == null) return;
+
+      final cached = hive.getBookAccess(bookId, userId);
       if (cached != null) {
         state = state.copyWith(
           status: BookAccessStatus.loaded,

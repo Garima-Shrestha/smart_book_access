@@ -168,12 +168,12 @@ class HiveService {
   Box<BookAccessHiveModel> get _bookAccessBox =>
       Hive.box<BookAccessHiveModel>(HiveTableConstant.bookAccessTable);
 
-  Future<void> saveBookAccess(BookAccessHiveModel model) async {
-    await _bookAccessBox.put(model.bookId, model);
+  Future<void> saveBookAccess(BookAccessHiveModel model, String userId) async {
+    await _bookAccessBox.put('${userId}_${model.bookId}', model);
   }
 
-  BookAccessHiveModel? getBookAccess(String bookId) {
-    return _bookAccessBox.get(bookId);
+  BookAccessHiveModel? getBookAccess(String bookId, String userId) {
+    return _bookAccessBox.get('${userId}_${bookId}');
   }
 
   Future<void> clearBookAccessBox() async {
