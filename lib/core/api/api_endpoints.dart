@@ -8,8 +8,8 @@ class ApiEndpoints {
   // Configuration
   // static const bool isPhysicalDevice = false;
   static const bool isPhysicalDevice = true;
-  static const String _ipAddress = '192.168.0.101';
-  // static const String _ipAddress = '10.70.35.251';
+  // static const String _ipAddress = '192.168.0.101';
+  static const String _ipAddress = '10.70.35.241';
   static const int _backendPort = 5050;
   static const int _webPort = 3000;
 
